@@ -1,0 +1,201 @@
+\chapter{Introduction}
+
+\iffalse
+This thesis proposes and implements a protocol for peer to peer communication between Android-based smartphone devices. The protocol allows any two devices to establish a direct UDP connection by taking advantage of NAT traversal techniques such as UDP hole punching to connect peers behind NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy. Peers in the network are addressed by their public keys and the protocol makes best effort to connect to a peer by resolving public key to an address using a distributed hash table.
+
+On top of this low-level protocol, a higher-level overlay with routing is established. In this overlay, a user can send messages to peers they are not directly connected to. This even allows to route messages over multiple transports. For example, a message can be send over Bluetooth and delivered to a user connected over the Internet by using another device a relay. The protocol is completely decentralized and does not rely on any any central entity except the bootstrap server.
+
+To show one of the many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows to send not only text messages, but also images and videos to demonstrate binary file transfer. Compared to the state of the art solutions, it combines both local and Internet connectivity, does not require any central server, and is completely open source.
+
+The protocol performance is experimentally examined with multiple devices connected to different Wi-Fi and carrier networks. The results including connection establishment, round trip times, and NAT puncture success rate are presented. Moreover, to show how the protocol performs in the wild, the chat messaging application is released on Google Play and tested by real users. To our best knowledge, this is the first attempt to provide always-on network overlay on mobile devices providing secure communication.
+\fi
+
+\chapter{Problem Description}
+
+\section{Ubiquitous Overlay Network}
+
+% history of internet, IPv4
+% address exhaustion, mobility
+
+% NAT breaks end-to-end principle
+% solutions:
+% - IPv6
+% - Mobile IP
+% - IPSec
+% IPv6 still not widely deployed
+% - TU preparing for IPv6 since 2012
+% - not available on any cellular network in NL
+
+\section{Network Address Translation}
+
+\subsection{NAT Classification}
+
+\subsection{Carrier Grade NAT}
+
+\subsection{Port Forwarding}
+
+% mention protocols for port forwarding configuration: UPnP-IGD, NAT-PMP, PCP
+% usually not enabled by default, not enabled in carrier networks
+
+\section{Nearby Communication}
+
+% technologies available on smartphones:
+% - Bluetooth, BLE, WiFi Direct, WiFi Aware
+% infrastructureless communication
+
+\section{Peer Discovery}
+
+
+\chapter{State of the Art}
+
+\section{NAT Traversal}
+
+\subsection{Session Traversal Utilities for NAT (STUN)}
+
+\subsection{Traversal Using Relays around NAT (TURN)}
+
+\subsection{Interactive Connectivity Establishment (ICE)}
+
+\subsection{ICMP Hole Punching}
+
+\subsection{Symmetric NAT Traversal}
+
+\section{P2P Communication Libraries}
+
+\subsection{libp2p}
+
+\subsection{IPv8}
+
+\subsection{Nearby Connections API}
+
+\subsection{Bridgefy SDK}
+
+
+\chapter{Design}
+
+%\section{NAT Detection}
+
+\section{NAT Traversal with Peer Introductions}
+
+%\section{Port Forwarding}
+
+%\section{Symmetric NAT Traversal}
+
+% \section{Network Service Discovery}
+
+\section{Relay Protocol with Bandwidth Accounting}
+
+\section{Using Bluetooth Low Energy for P2P Communication}
+
+
+\chapter{Implementation}
+
+\section{Project Structure}
+
+% JVM vs. Android
+% unit tests, TODO: Android tests
+% library vs. super app separation
+
+\section{System Architecture}
+
+\subsection{Communities}
+
+\subsection{Discovery Strategies}
+
+\subsection{Endpoints}
+
+\section{Bootstrap Server}
+
+%\section{Bluetooth Ad-Hoc Network}
+%\subsection{Bluetooth Low Energy}
+%\subsection{Generic Attribute Profile}
+
+%\section{Multi-Transport Routing Algorithm}
+
+%\section{Peer Discovery and Traversal in Distributed Hash Table}
+
+%\section{Packet Format}
+
+\section{Maintaining Backward Compatibility}
+% continuous improvement while maintaining backward compatibility with 10 year old ipv8 implementation
+
+\section{TrustChain Explorer}
+
+\section{Binary Transfer over UDP}
+
+\section{PeerChat: Distributed Messenger}
+
+\section{Testbed for Distributed Android Applications}
+
+
+\chapter{Experiment}
+
+\section{Analysis and Puncturing of Carrier Grade NAT}
+
+According to the report by Statista \cite{statista:marketshare}, there were three major mobile phone operators providing services in the Netherlands in Q4 2018. They are listed in Table \ref{table_marketshare}. In total, these represent up to 85 \% of the market share. The rest of the market is shared by Mobile Virtual Network Operators who sell services over existing networks of those three operators.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ | l | c | }
+        \hline
+        \textbf{Operator} & \textbf{Market share} \\
+        \hline
+        KPN & 35\% \\
+        Vodafone & 25\% \\
+        Mobile Virtual Network Operators & 25\% \\
+        T-Mobile & 20\% \\
+        \hline
+    \end{tabular}
+    \caption{Market share of mobile network operators in the Netherlands in Q4 2018. The shares do not sum up to 100\% as they are rounded up within five percent ranges in the original report. \cite{statista:marketshare}}
+    \label{table_marketshare}
+\end{table}
+
+We have purchased pre-paid SIM cards for all three major mobile network operators to investigate whether they are suitable for peer-to-peer communication. First, we tried to infer the characteristics of their Carrier Grade NAT deployments.
+
+We used the STUN protocol and NAT behavior discovery mechanisms described in \cite{rfc5780}. They have shown that all networks appear to use \textit{Endpoint-Independent Mapping (EIM)} and \textit{Address and Port-Dependent Filtering} (also known as \textit{port-restricted cone NAT}). EIM is a sufficient condition for our NAT traversal mechanism to be successful, so this would make all these NATs suitable for P2P communication.
+
+However, as NAT behavior can change over time, we performed some more tests to verify that the behavior is consistent over time. We attempted to connect to 50 different peers over the interval of 5 minutes. We verified that KPN and T-Mobile networks are consistent with EIM behavior. However, the Vodafone network changes the mapped port for new connections approximately every 60 seconds, even when connecting to the same IP address and a different port. This behavior can be described as \textit{Address and Port-Dependent Mapping}, which is characteristic for a \textit{symmetric NAT}.
+
+The mapped ports seem to be assigned at random from the range of 10,000 ports, which makes it infeasible to use any known symmetric NAT traversal techniques such as port prediction or multiple hole punching \cite{multihole}\cite{takeda}.
+
+%The results are presented in Table \ref{table_cgnat_analysis}.
+
+\iffalse
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ | l | l | l | l | }
+        \hline
+        \textbf{Operator} & \textbf{Mapping behavior} & \textbf{Filtering behavior} & \textbf{Binding lifetime} \\
+        \hline
+        KPN & Endpoint-Independent & Address and Port-Dependent & ? \\
+        Vodafone & Endpoint-Independent / Address and Port-Dependent & Address and Port-Dependent & ? \\
+        T-Mobile & Endpoint-Independent & Address and Port-Dependent & ? \\
+        \hline
+    \end{tabular}
+    \caption{Characteristics of CGNATs deployed by Dutch mobile network operators}
+    \label{table_cgnat_analysis}
+\end{table}
+
+\fi
+
+% Types of NAT used by different operators
+% - T-Mobile - Address-restricted cone
+% - Vodafone – symmetric NAT, random port mapping, TODO: analyze port distribution
+% - KPN - Address-restricted cone
+
+\section{Performance Evaluation}
+
+\subsection{Bootstrap Performance}
+
+\subsection{Stress Test}
+
+% experiments:
+% - bootstrap from 0 to 20 peers
+% - 24-hour stress test
+
+
+\chapter{Conclusion}
+
+\section{Future Work}
+% IPv6 support, multiple network interfaces

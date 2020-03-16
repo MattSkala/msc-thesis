@@ -1,0 +1,83 @@
+\documentclass[whitelogo]{tudelft-report}
+\usepackage{natbib}
+\usepackage{changes}
+
+\usepackage[justification=centering]{caption}
+
+\begin{document}
+
+%% Use Roman numerals for the page numbers of the title pages and table of
+%% contents.
+\frontmatter
+
+%% Uncomment following 19 lines for a cover with a picture on the lower half only
+%\title[tudelft-white]{Title}
+%\subtitle[tudelft-cyan]{Optional subtitle}
+%\author[tudelft-white]{J.\ Random Author}
+%\affiliation{Technische Universiteit Delft}
+%\coverimage{cover.jpg}
+%\titleoffsetx{10cm}
+%\titleoffsety{10cm}
+%\afiloffsetx{1cm}
+%\afiloffsety{18cm}
+%\covertext[tudelft-white]{
+%    \textbf{Cover Text} \\
+%    possibly \\
+%    spanning
+%    multiple
+%    lines
+%    \vfill
+%    ISBN 000-00-0000-000-0
+%}
+%\makecover
+
+%% Uncomment following 16 lines for a cover with a picture on the lower half only
+\title[tudelft-white]{Ubiquitous overlay}
+\subtitle[tudelft-black]{Universal connectivity using imperfect hardware}
+\author[tudelft-white]{Matouš Skála}
+\affiliation{Technische Universiteit Delft}
+\coverimage{network.jpg}
+
+
+%\covertext[tudelft-white]{
+%    \textbf{Cover Text} \\
+%    possibly \\
+%   spanning
+%   multiple
+%    lines
+%   \vfill
+%    ISBN 000-00-0000-000-0
+%
+\setpagecolor{tudelft-cyan}
+\makecover[split]
+
+
+%% Include an optional title page.
+\input{title}
+
+\input{preface}
+
+\tableofcontents
+
+%% Use Arabic numerals for the page numbers of the chapters.
+\mainmatter
+
+\input{1-introduction}
+
+%\input{2-state-of-the-art}
+
+%\input{3-design}
+
+%\input{4-implementation}
+
+%\input{5-conclusion}
+
+%% Use letters for the chapter numbers of the appendices.
+\appendix
+
+%\input{appendix-a}
+
+\bibliography{references}
+
+\end{document}
+
