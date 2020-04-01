@@ -1,13 +1,20 @@
 \chapter{Introduction}
 
+The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In \textit{Internet Protocol version 4 (IPv4)} which routes most traffic today, each computer gets assigned an address which is subsequently used for packet routing. As IPv4 uses a 32-byte address space, it is not feasible to assign a unique address to every device on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy \textit{Network Address Translation (NAT)}, which allows a single address to be shared across multiple devices behind a NAT device.
+
+Another issue appeared with the rise of portable computers and smartphones. IPv4 addresses are dependent on the physical location and can not be in any way considered as stable user identifiers. There has been several proposals including Mobile IP, IPSec, and IPv6 to improve the usability and security of the Internet Protocol. However, none of them have been widely deployed yet or address all known issues.
+
+This thesis proposes and implements a decentralized protocol for peer to peer communication. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect to peers behind NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth. Peers are addressed by their public keys and their physical addresses on lower layers are abstracted away.
+
+The protocol makes best effort to connect peers behind NATs. In case the connection is not possible, it resorts to a relay protocol. Bandwidth accounting prevents misusing the relay servers and provides incentive for relay operators. The protocol is completely decentralized and does not rely on any central entity.
+
+%This also allows to route messages over multiple transports. For example, a message can be send over Bluetooth and delivered to a user connected over the Internet by using another device a relay.
+
+To show one of many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows to send not only text messages, but also images and videos to demonstrate binary file transfer.
+
+Compared to the state of the art solutions, it combines both nearby and Internet connectivity, does not require any central server, and is completely open source. Finally, the protocol performance is experimentally evaluated with multiple Android devices connected to different Wi-Fi and carrier networks and running a stress test over the period of 24 hours.
+
 \iffalse
-This thesis proposes and implements a protocol for peer to peer communication between Android-based smartphone devices. The protocol allows any two devices to establish a direct UDP connection by taking advantage of NAT traversal techniques such as UDP hole punching to connect peers behind NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy. Peers in the network are addressed by their public keys and the protocol makes best effort to connect to a peer by resolving public key to an address using a distributed hash table.
-
-On top of this low-level protocol, a higher-level overlay with routing is established. In this overlay, a user can send messages to peers they are not directly connected to. This even allows to route messages over multiple transports. For example, a message can be send over Bluetooth and delivered to a user connected over the Internet by using another device a relay. The protocol is completely decentralized and does not rely on any any central entity except the bootstrap server.
-
-To show one of the many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows to send not only text messages, but also images and videos to demonstrate binary file transfer. Compared to the state of the art solutions, it combines both local and Internet connectivity, does not require any central server, and is completely open source.
-
-The protocol performance is experimentally examined with multiple devices connected to different Wi-Fi and carrier networks. The results including connection establishment, round trip times, and NAT puncture success rate are presented. Moreover, to show how the protocol performs in the wild, the chat messaging application is released on Google Play and tested by real users. To our best knowledge, this is the first attempt to provide always-on network overlay on mobile devices providing secure communication.
 \fi
 
 \chapter{Problem Description}
@@ -85,7 +92,15 @@ The protocol performance is experimentally examined with multiple devices connec
 
 \section{Relay Protocol with Bandwidth Accounting}
 
-\section{Using Bluetooth Low Energy for P2P Communication}
+\section{Nearby Communication over Bluetooth}
+
+\subsection{Bluetooth Low Energy}
+
+\subsection{Roles in BLE}
+
+\subsection{Generic Attribute Profile}
+
+\subsection{Using Bluetooth Low Energy for P2P Communication}
 
 
 \chapter{Implementation}
