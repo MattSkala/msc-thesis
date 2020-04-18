@@ -21,6 +21,8 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 
 \section{Ubiquitous Overlay Network}
 
+
+
 % history of internet, IPv4
 % address exhaustion, mobility
 
@@ -32,6 +34,20 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 % IPv6 still not widely deployed
 % - TU preparing for IPv6 since 2012
 % - not available on any cellular network in NL
+
+% motivation for decentralized internet
+% problems with current internet:
+% - censorship
+% - data in control of big companies
+% we need building blocks to disrupt centralized services
+% data in controls of users
+% first steps: connectivity, data availability, privacy
+% mention blockchain as enabler of permissionless economic activity
+
+% ubiquitous overlay
+% - peer to peer connectivity over the Internet
+% - off-grid communication without internet access
+% -
 
 \section{Network Address Translation}
 
@@ -46,9 +62,23 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 
 \section{Nearby Communication}
 
+Modern smartphone devices come equipped with several wireless communication standards that can potentially be used for communication with other nearby devices. It is desirable to use such a technology when multiple devices in proximity want to communicate with each other when there is no reliable Internet infrastructure available. These technologies can be also preferred over the Internet in case of censorship and privacy concerns, as has been shown during numerious occasions such as Hong Kong protests. From the user experience perspective, it is desired that the device discovery and connection establishment does not require any user interaction besides the one required by the application use case. However, this is often opposed by the security model of smartphone operating systems which try to protect users by enforcing system UI for any sensitive operations.
+
+Probably the oldest and the most battle-tested technology is Bluetooth, which has been in development for over more then 20 years already. The common flow for Bluetooth usage is to first force user to pair two devices. Only then, \textit{Radio frequency communication (RFCOMM)} channel can be established between paired devices. This process requires user interaction which degrades the user experience in certain applications when authentication is performed on the application level. While it is possible to establish an \textit{insecure} RFCOMM channel if the MAC address of the other device is known, the user of the other device still needs to manually set it to be \textit{discoverable}.
+
+In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduced. It is a completely different communication protocol incompatible with the classic Bluetooth, which we will further refer to as \textit{Bluetooth Classic}. Compared to Bluetooth Classic, BLE offers considerably decreased power consumption with a similar communication range. Its was originally intended to support an infrequent low-power communication with wearables, healthcare accessories, or smart home appliances. However, while it is not a primary use case, it could also be potentially used for low-bandwidth peer-to-peer communication between smartphone devices. It is notable that once user allows Bluetooth permission, the application can fully control BLE APIs without any user interaction, which opens up doors for a range of many different applications.
+
 % technologies available on smartphones:
 % - Bluetooth, BLE, WiFi Direct, WiFi Aware
 % infrastructureless communication
+
+% Bluetooth Classic
+% - requires the device to be discoverable - user interaction
+% - no interoperability between iOS and Android
+% Bluetooth Low Energy
+% - energy efficient, does not require pairing, but lower bandwidth
+% - API on Android very low level, error-prone to use
+% - role simultaneity – master and slave at the same time
 
 \section{Peer Discovery}
 
@@ -77,7 +107,6 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 
 \subsection{Bridgefy SDK}
 
-
 \chapter{Design}
 
 %\section{NAT Detection}
@@ -94,14 +123,50 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 
 \section{Nearby Communication over Bluetooth}
 
-\subsection{Bluetooth Low Energy}
+%\subsection{Bluetooth Low Energy}
 
-\subsection{Roles in BLE}
+%\subsection{Roles in BLE}
 
-\subsection{Generic Attribute Profile}
+%\subsection{Generic Attribute Profile}
 
-\subsection{Using Bluetooth Low Energy for P2P Communication}
+%\subsection{Using Bluetooth Low Energy for P2P Communication}
 
+\begin{figure}
+    \includegraphics[width=\textwidth]{diagrams/bluetooth-architecture}
+    \caption{Bluetooth Low Energy Communication Architecture}
+\end{figure}
+
+\subsection{BLE Advertising}
+
+\subsection{BLE Scanning}
+
+\subsection{GATT Server}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.25\textwidth]{diagrams/bluetooth-gatt}
+    \caption{GATT Server Architecture}
+\end{figure}
+
+\subsection{Discovery Strategy}
+
+% GATT - service, characteristic, descriptor
+% Service IPv8
+% Characteristics
+% - Member ID, permission read
+% - Writer, permission write
+% Handshake
+% - 1. Read Member ID
+% - 2. Wait for other peer to read our Member ID
+% - 3. Send data to peer via its Writer
+
+% Future Work:
+% - L2CAP connection oriented channels (Android 10+)
+
+% https://medium.com/@martijn.van.welie/making-android-ble-work-part-3-117d3a8aee23
+% https://stefanbossbaly.com/2018/08/06/ble-in-android
+% https://blog.classycode.com/a-short-story-about-android-ble-connection-timeouts-and-gatt-internal-errors-fa89e3f6a456
+% https://punchthrough.com/android-ble-development-tips
 
 \chapter{Implementation}
 

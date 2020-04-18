@@ -1,0 +1,8 @@
+@startuml introduction
+Alice -> Bob: Introduction Request
+Alice <- Bob: Introduction Response
+Bob -> Charlie: Puncture Request
+Alice <-- Charlie: Puncture
+Alice -> Charlie: Introduction Request
+Alice <- Charlie: Introduction Response
+@enduml

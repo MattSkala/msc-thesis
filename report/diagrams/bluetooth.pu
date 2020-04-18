@@ -1,0 +1,10 @@
+@startuml bluetooth
+Alice -> Bob: Connect
+Alice <- Bob: Connected
+Alice <- Bob: Connect
+Alice -> Bob: Connected
+Alice -> Bob: Read Identity
+Alice <- Bob: Identity
+Alice <- Bob: Read Identity
+Alice -> Bob: Identity
+@enduml
