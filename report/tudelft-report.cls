@@ -431,24 +431,26 @@
           \setlength\@cover@fronttextwidth{\@cover@splitboxwidth}
           \addtolength\@cover@fronttextwidth{-2\@cover@margin}
           \setlength\@cover@fronttextheight{\@cover@splitboxheight}
-          \addtolength\@cover@fronttextheight{-4\@cover@margin}
+          \addtolength\@cover@fronttextheight{-6\@cover@margin}
           \coordinate (tcorner) at ($(top left)+(2\@cover@margin,-2\@cover@margin)$);
           \coordinate (front top left) at (tcorner);
 %%          \coordinate (back top left) at ($(tcorner)+(-\@cover@backboxwidth,\@cover@backboxheight)$);
           \node at (front top left)[anchor=north west,inner sep=\@cover@margin]{
              \begin{minipage}[t][\@cover@fronttextheight]{\@cover@fronttextwidth}
                  %% Print the title and optional subtitle at the top in white.
-                   {\titlefont\color{\@titlecolor}\fontsize{58}{58}\selectfont\@title}
+                   {\titlefont\color{\@titlecolor}\fontsize{70}{70}\selectfont\@title}
                     \ifx\@subtitle\undefined\else
 %                     \\[3mm]
                      \vfill
-
-                     {\titlefont\color{\@subtitlecolor}\fontsize{52}{52}\selectfont\@subtitle}
+                     \begin{flushleft}
+                       {\titlefont\color{\@subtitlecolor}\fontsize{45}{45}\selectfont\@subtitle}
+                     \end{flushleft}
                    \fi
+
                  %% Print the author.
                    \vfill
 
-                   {\titlefont\color{\@authorcolor}\fontsize{52}{52}\selectfont\@author}
+                   {\titlefont\color{\@authorcolor}\fontsize{45}{45}\selectfont\@author}
                    \ifx\@cover@text\undefined\else
                      \vfill
 
@@ -631,7 +633,7 @@
 %% Subsubsections have the same font and color as sections and subsections, but
 %% are not preceded by a number.
 \titleformat{\subsubsection}
-    {\headerstyle}
+    {\sectitlestyle}
     {}
     {0pt}
     {\color{title}}
