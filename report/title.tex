@@ -7,15 +7,17 @@
 
 %% Print the title in cyan.
 {\makeatletter
-\largetitlestyle\fontsize{64}{94}\selectfont\@title
+\fontsize{64}{64}\selectfont\@title\par
 %\largetitlestyle\color{tudelft-cyan}\Huge\@title
 \makeatother}
+
+\bigskip
 
 %% Print the optional subtitle in black.
 {\makeatletter
 \ifx\@subtitle\undefined\else
     \bigskip
-   {\tudsffamily\fontsize{22}{32}\selectfont\@subtitle}
+   {\fontsize{32}{42}\selectfont\@subtitle\par}
     %\titlefont\titleshape\LARGE\@subtitle
 \fi
 \makeatother}
@@ -32,7 +34,7 @@ by
 %% Print the name of the author.
 {\makeatletter
 %\largetitlefont\Large\bfseries\@author
-\largetitlestyle\fontsize{26}{26}\selectfont\@author
+\fontsize{26}{26}\selectfont\@author
 \makeatother}
 
 \bigskip

@@ -1,18 +1,24 @@
 \chapter{Introduction}
 
-The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In \textit{Internet Protocol version 4 (IPv4)} which routes most traffic today, each computer gets assigned an address which is subsequently used for packet routing. As IPv4 uses a 32-byte address space, it is not feasible to assign a unique address to every device on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy \textit{Network Address Translation (NAT)}, which allows a single address to be shared across multiple devices behind a NAT device.
+// TODO: rewrite introduction
 
-Another issue appeared with the rise of portable computers and smartphones. IPv4 addresses are dependent on the physical location and can not be in any way considered as stable user identifiers. There has been several proposals including Mobile IP, IPSec, and IPv6 to improve the usability and security of the Internet Protocol. However, none of them have been widely deployed yet or address all known issues.
+The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of \textit{Network Address Translation (NAT)} which allows a single address to be shared across multiple devices.
 
-This thesis proposes and implements a decentralized protocol for peer to peer communication. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect to peers behind NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth. Peers are addressed by their public keys and their physical addresses on lower layers are abstracted away.
+Another issue appeared with the rise of portable computers and smartphones. IPv4 addresses are dependent on the physical location and can not be considered stable user identifiers. There has been several proposals including Mobile IP, IPSec, and IPv6 to improve the usability and security of the Internet Protocol. However, none of them have been widely deployed yet or address all known issues.
 
-The protocol makes best effort to connect peers behind NATs. In case the connection is not possible, it resorts to a relay protocol. Bandwidth accounting prevents misusing the relay servers and provides incentive for relay operators. The protocol is completely decentralized and does not rely on any central entity.
+% TODO: client-server model, but recently trend is decentralization
+
+This thesis proposes and implements a decentralized protocol for peer to peer communication between any two devices. It is implemented in form of a Kotlin library which can be used on desktop, smartphones, tablets, and IoT devices. This library can be used to deploy a truly ubiquitous network overlay which is available anytime and everywhere. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect peers behind NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy. Peers are addressed by their public keys and their physical addresses on lower layers are abstracted away.
+
+The protocol makes best effort to connect peers behind NATs. However, in case the connection is not possible, it resorts to a relay protocol. Bandwidth accounting prevents misusing the relay servers and provides incentive for relay operators. The protocol is completely decentralized and does not rely on any central entity.
 
 %This also allows to route messages over multiple transports. For example, a message can be send over Bluetooth and delivered to a user connected over the Internet by using another device a relay.
 
-To show one of many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows to send not only text messages, but also images and videos to demonstrate binary file transfer.
+To show one of many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows two users to exchange identities in a secure way to prevent MITM attack. Then they can transfer not only text messages, but also images and videos, to demonstrate a binary file transfer.
 
-Compared to the state of the art solutions, it combines both nearby and Internet connectivity, does not require any central server, and is completely open source. Finally, the protocol performance is experimentally evaluated with multiple Android devices connected to different Wi-Fi and carrier networks and running a stress test over the period of 24 hours.
+Compared to the state of the art solutions, the proposed library combines both nearby and Internet connectivity, does not require any central server, works on a variety of devices, and is completely open source.
+
+Finally, the protocol performance is experimentally evaluated with multiple Android devices connected to different Wi-Fi and carrier networks and running a stress test over the period of 24 hours.
 
 \iffalse
 \fi
@@ -47,11 +53,25 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 % ubiquitous overlay
 % - peer to peer connectivity over the Internet
 % - off-grid communication without internet access
-% -
+
+% research question: How to establish a secure connection between two smartphone devices without using a central server?
 
 \section{Network Address Translation}
 
 \subsection{NAT Classification}
+
+% Mapping: Endpoint-Independent, Address-Dependent, Address- and Port-Dependend
+% Filtering: Endpoint-Independent, Address-Dependent, Address- and Port-Dependend
+
+% Most common implementations (TODO: show table with mapping and filtering behavior):
+% - Full Cone NAT
+% - Restricted Cone NAT
+% - Port Restricted Cone NAT
+% - Symmetric NAT
+
+% Hairpinning
+
+% NAT detection in STUN
 
 \subsection{Carrier Grade NAT}
 
@@ -62,11 +82,66 @@ Compared to the state of the art solutions, it combines both nearby and Internet
 
 \section{Nearby Communication}
 
-Modern smartphone devices come equipped with several wireless communication standards that can potentially be used for communication with other nearby devices. It is desirable to use such a technology when multiple devices in proximity want to communicate with each other when there is no reliable Internet infrastructure available. These technologies can be also preferred over the Internet in case of censorship and privacy concerns, as has been shown during numerious occasions such as Hong Kong protests. From the user experience perspective, it is desired that the device discovery and connection establishment does not require any user interaction besides the one required by the application use case. However, this is often opposed by the security model of smartphone operating systems which try to protect users by enforcing system UI for any sensitive operations.
+Modern smartphone devices come equipped with several wireless communication standards that can potentially be used for communication with other nearby devices. It is desirable to use such a technology when multiple devices in proximity want to communicate with each other when there is no reliable Internet infrastructure available. These technologies can be also preferred over the Internet in case of censorship and privacy concerns, as has been shown during numerious occasions such as Hong Kong protests. From the user experience perspective, it is desired that the device discovery and connection establishment does not require any user interaction besides the one required by the application use case. However, this is often difficult to achieve in the security model of smartphone operating systems, which try to protect users by enforcing a system UI for any sensitive operations, as shown in Figure \ref{system_ui}.
 
-Probably the oldest and the most battle-tested technology is Bluetooth, which has been in development for over more then 20 years already. The common flow for Bluetooth usage is to first force user to pair two devices. Only then, \textit{Radio frequency communication (RFCOMM)} channel can be established between paired devices. This process requires user interaction which degrades the user experience in certain applications when authentication is performed on the application level. While it is possible to establish an \textit{insecure} RFCOMM channel if the MAC address of the other device is known, the user of the other device still needs to manually set it to be \textit{discoverable}.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/dialog_bluetooth-discovery}
+    \includegraphics[width=0.32\textwidth]{screens/dialog_bluetooth-pairing}
+    \includegraphics[width=0.32\textwidth]{screens/dialog_wifi-direct}
+    \caption{The system UI for enabling Bluetooth discovery, accepting an incoming Bluetooth pairing request, and accepting an incoming Wi-Fi Direct connection on Android 9}
+    \label{system_ui}
+\end{figure}
 
-In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduced. It is a completely different communication protocol incompatible with the classic Bluetooth, which we will further refer to as \textit{Bluetooth Classic}. Compared to Bluetooth Classic, BLE offers considerably decreased power consumption with a similar communication range. Its was originally intended to support an infrequent low-power communication with wearables, healthcare accessories, or smart home appliances. However, while it is not a primary use case, it could also be potentially used for low-bandwidth peer-to-peer communication between smartphone devices. It is notable that once user allows Bluetooth permission, the application can fully control BLE APIs without any user interaction, which opens up doors for a range of many different applications.
+% TODO: add screenshots of Bluetooth enable discovery, pairing dialog, WiFi direct dialog
+
+\subsection{Bluetooth}
+
+The oldest and the most battle-tested technology for nearby connectivity is Bluetooth, which has been in development for more then 20 years. The common flow for Bluetooth usage is to first force the user to \textit{pair} (or \textit{bond}) two devices. The device A first needs to manually be set as \textit{discoverable}, usually for a limited time period. The device B then performs a scan to discover nearby devices. The device B can then send a pairing request to the selected device. Then a pairing code is displayed and once both users accept the pairing request, the devices are paired.
+
+Only after that, a secure \textit{Radio frequency communication (RFCOMM)} channel can be established. The pairing process requires user interaction, which degrades the user experience in certain applications when authentication is performed on the application level. While it is possible to establish an \textit{insecure} RFCOMM channel if the MAC address of the other device is known, the user of the other device still needs to manually set it to be discoverable.
+
+\subsection{Bluetooth Low Energy}
+
+% TODO: cite specification
+
+\textit{Bluetooth Low Energy (BLE)} \cite{blebook} was introduced in 2010 as part of the Bluetooth 4.0 specification. It is a completely different communication protocol incompatible with the classic Bluetooth. BLE offers considerably decreased power consumption with a similar communication range and slightly lower bandwidth. It was originally intended to support an infrequent low-power communication with wearables, healthcare accessories, or smart home appliances. However, while it is not a primary use case, it could also be potentially used for low-bandwidth peer-to-peer communication between smartphone devices.
+
+It is notable that once an application is granted a Bluetooth permission, it can fully control BLE APIs without any user interaction, which opens up doors for a range of many different applications.
+
+% use cases: mesh networks
+% upper physical throughput: 1 Mbps (modulation rate)
+
+\subsection{Wi-Fi Direct}
+
+\subsection{Wi-Fi Aware}
+
+
+\subsection{Support in Operating Systems}
+
+\begin{table}
+    \centering
+    \begin{tabular}{ | l | l | l | l | l | }
+      \hline
+      \textbf{Technology} & \textbf{Android} & \textbf{iOS} & \textbf{Throughput} & \textbf{Range} \\
+      \hline
+      Bluetooth & 2.0+ & 5.0+ & 2 Mbps & $\sim$40 m \\
+      \hline
+      BLE Advertising & 4.3+ & 6.0+ & \multirow{3}{*}{0.3 Mbps} & \multirow{3}{*}{$\sim$100 m} \\
+      BLE GATT & 5.0+ & 6.0+ & &  \\
+      BLE L2CAP & 10.0+ & 11.0+ & &  \\
+      \hline
+      Wi-Fi Direct & 4.0+ & N/A & \multirow{2}{*}{250 Mbps} & \multirow{2}{*}{$\sim$200 m} \\
+      Wi-Fi Aware & 8.0+ & N/A & & \\
+      \hline
+    \end{tabular}
+    \caption{The comparison of properties of the most common wireless communication technologies and their support in smarphone operating systems
+    }
+    \label{wirelesstech_table}
+  \end{table}
+
+
+
 
 % technologies available on smartphones:
 % - Bluetooth, BLE, WiFi Direct, WiFi Aware
@@ -101,11 +176,15 @@ In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduc
 
 \subsection{libp2p}
 
-\subsection{IPv8}
-
 \subsection{Nearby Connections API}
 
+\subsection{MultipeerConnectivity}
+
 \subsection{Bridgefy SDK}
+
+\subsection{Berty Protocol}
+
+\subsection{IPv8}
 
 \chapter{Design}
 
@@ -113,42 +192,106 @@ In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduc
 
 \section{NAT Traversal with Peer Introductions}
 
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.6\textwidth]{diagrams/uml_peer-introduction}
+%    \caption{Peer discovery mechanism with NAT puncturing}
+%\end{figure}
+
 %\section{Port Forwarding}
 
 %\section{Symmetric NAT Traversal}
 
 % \section{Network Service Discovery}
 
-\section{Relay Protocol with Bandwidth Accounting}
+\clearpage
 
-\section{Nearby Communication over Bluetooth}
+\section{P2P Communication with Nearby Devices}
 
-%\subsection{Bluetooth Low Energy}
+\subsection{Introduction to Bluetooth Low Energy}
 
-%\subsection{Roles in BLE}
+In this section, we introduce the most important Bluetooth Low Energy concepts defined in the Bluetooth specification \cite{bluetooth51spec}. This background knowledge is fundamental for understanding the subsequent sections. In principle, there are two methods that BLE devices can use for communication: using connectionless \textit{broadcasting}, or by establishing \textit{connections}.
 
-%\subsection{Generic Attribute Profile}
+\subsubsection{Broadcasting}
 
-%\subsection{Using Bluetooth Low Energy for P2P Communication}
+BLE advertising packets are used to broadcast data to multiple peers at the same time. Other devices can run a \textit{scanning} procedure to read advertisement packets. Each advertisement packet can carry 31-byte payload to describe its capabilities and or any other custom information. Optionally, the scanning device can request a \textit{scan response} from the advertiser, in which the advertiser can send an additional 31-byte payload. That means 62 bytes in total can be transmitted using the broadcasting mechanism. It is important to note that this is unidirectional data transfer and the broadcaster has no way to specify who can receive those packets, or receive any acknowledgements.
 
-\begin{figure}
-    \includegraphics[width=\textwidth]{diagrams/bluetooth-architecture}
-    \caption{Bluetooth Low Energy Communication Architecture}
-\end{figure}
+\subsubsection{Connections}
 
-\subsection{BLE Advertising}
+An advertising packet can be marked as \textit{connectable}. In that case, if data have to be transferred bidirectionally or more than 62 bytes are required, a connection between two devices can be established.
 
-\subsection{BLE Scanning}
+Devices in BLE can act in two roles: \textit{centrals} and \textit{peripherals}. A central repatedly scans for advertising packets broadcasted by peripherals and when needed, it initiates a connection. A peripheral then periodically broadcasts advertising packets and accepts incoming connections. There are no restrictions on connection limits imposed by the specification. Since Bluetooth 4.1, a single device can act both as a central and peripheral at the same time, and it can also be connected to multiple centrals/peripherals.
 
-\subsection{GATT Server}
+\subsubsection{Address Types}
+
+The BLE protocol stack differentiates between two types of addresses. The \textit{public address} is a standard IEEE-assigned MAC address that uniquely identifies the hardware device. Since all BLE packets include a device address, it would be possible to track device movement by adversial scanners. BLE addresses this issue by using a \textit{random address} for any communication. This address is generated using the combination of a device \textit{identity resolving key} and a random number, and it can be changed often, even during the lifetime of a connection.
+
+\subsection{BLE Protocol Stack}
+
+The BLE standard is composed of several protocols which form the BLE stack visualized in Figure \ref{ble_stack}. The stack is split in two parts: a \textit{controller} and a \textit{host}. The controller is usually implemented in hardware, while the host is a part of the operating system. Both parts communicate over the \textit{Host Controller Interface (HCI)}. Even though the applications usually communicate only with the highest layers, it is worth to understand how all layers of the stack fit together. In this section, we describe the responsibilities and mechanics of each protocol.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.25\textwidth]{diagrams/bluetooth-gatt}
-    \caption{GATT Server Architecture}
+    \includegraphics[width=0.40\textwidth]{diagrams/ble-stack}
+    \caption{Bluetooth Low Energy Protocol Stack \cite{blebook}}
+    \label{ble_stack}
 \end{figure}
 
-\subsection{Discovery Strategy}
+\subsubsection{Logical Link Control and Adaptation Protocol (L2CAP)}
+
+On the lowest layer in the host, L2CAP is responsible for multiplexing and splitting data from higher-level protocols (ATT and GAP) into 27-byte data packets. These are then forwarded to the Link Layer and transmitted over the Physical Layer implemented in the Bluetooth radio. Starting with Bluetooth 4.1, the applications can communicate over L2CAP directly. User-defines channels allow for higher-throughput data transfer without the additional complexity added by ATT.
+
+% \subsubsection{Security Manager (SM)}
+
+\subsubsection{Generic Access Profile (GAP)}
+// TODO
+
+\subsubsection{Attribute Protocol (ATT)}
+ATT is a client-server protocol for reading and writing attributes. It is strict about sequential operation. If a request is pending, no further requests should be sent until the response is received, otherwise they are discarded. Attributes are stored under attribute handles defined by UUIDs. Various operations are defined by the protocol. Apart from the standard configuraiton, read and write, queued write is supporte to write data longer than a single packet. If a client wants to be notified about handle changes, it can subscribe to handle value notifications or indications. Both allow the server to notify the clients whenever a value changes, but in case of indication, the client should respond with ack packet to confirm it has received the indication.
+
+\subsubsection{Generic Attribute Profile (GATT)}
+
+The Generic Attribute Profile defines how to exchange data between devices. It uses ATT as a transport protocol. The data are organized hierarchically in \textit{services} which contain groups of related data called \textit{characteristics}, which can be further specified using \textit{descriptors}.
+
+GATT is a client–server protocol and it follows the same principles as ATT. A client sends requests to the server and receives responses or server-initiated updates. The server is responsible for storing data written by the client and responding to read requests. It is important to mention that the client and server roles in GATT are independent of the roles defined by GAP. Both a peripheral and a central can take the role of a client or a server, or even both at the same time.
+
+%\subsection{Using Bluetooth Low Energy for P2P Communication}
+
+%\subsection{Bluetooth Device Address}
+
+\subsection{BLE Communication Architecture}
+
+As mentioned earlier, the primary purpose of BLE was to enable exchange of information with peripheral devices. However, as it is currently the most universal way for nearby communication on mobile devices that does not require any user interaction, it is potentially suitable for any type of communication. Since Android 5.0, it is possible to create a custom GATT server which allows two Android devices to communicate with each other over BLE. We now proceed to designing a system architecture for P2P communication using BLE. The overall high-level architecture of data flow is shown in Figure \ref{ble_architecture}.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{diagrams/ipv8-ble-architecture}
+    \caption{Bluetooth Low Energy Communication Architecture}
+    \label{ble_architecture}
+\end{figure}
+
+The BLE module should be composed of several submodules with clearly separated responsibilities. The communication begins by the device A broadcasting connectable advertising packets using \textbf{BLE Advertiser}. The advertising packet contains:
+
+\begin{itemize}
+    \item a \textit{service UUID} which identifies our application,
+    \item a \textit{transmission power level} in dB which can be used by the receiver to calculate a path loss and estimate the distance between devices, and
+    \item a \textit{peer ID} which identifies the broadcasting device.
+\end{itemize}
+
+The device B then scans for advertising packets using a \textbf{BLE Scanner}. It should filter packets by service UUID to receive only packets relevant to our application. The BLE scan is a power-intensive operation, so it should be performed only when the user actually wants to connect to a new device. It could be done e.g. only when the application is in the foreground. In case we are designing a long-running service that should run in the background, a scan should be run periodically. We should have an option to specify a scan window duration and an interval between individual scans.
+
+Once the scanner receives an advertising packet, it creates a \textit{peer candidate} which consists of a peer ID, a Bluetooth device address which can be used to initiate a connection, a transmission power level in dB, and a received signal strength (RSSI) in dBm. It stores the peer candidate into the \textbf{Peer Store}.
+
+The \textbf{Discovery Strategy} is responsible for selecting which peer we should connect to. The strategy should be application-specific and can e.g. prefer to connect to devices with the largest RSSI value, or to connect only to known peers based on their peer ID. Once the strategy selects a peer it wants to contact, it is sent to the \textbf{Connection Manager}.
+
+The connection manager contains all GATT-related communication logic. Each device has exactly one GATT server and an arbitrary number of GATT client instances, one for each device it is connected to. The GATT server implements a single GATT service containing two characteristics which are shown in Figure \ref{gatt_server}. The \textbf{Public Key} characteristic has a \textit{readable} permission and simply contains a public key of the peer. It is used to determine the identity of the device when initializing the connection and can be used for authentication and encryption in the further communication. The \textbf{Writer} characteristic with a \textit{writable} permission is then used for sending data from the client to the server. As we want to support bidirectional communication, every two devices need to have a pair of client–server and server–client connections. This can be implemented in a way that every time a GATT server receives an incoming connection, the connection manager initiates an outgoing connection to the GATT server of the connecting device. Only after both links are established, the connection is considered ready.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.25\textwidth]{diagrams/ipv8-gatt}
+    \caption{Our GATT Server Architecture}
+    \label{gatt_server}
+\end{figure}
 
 % GATT - service, characteristic, descriptor
 % Service IPv8
@@ -168,7 +311,13 @@ In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduc
 % https://blog.classycode.com/a-short-story-about-android-ble-connection-timeouts-and-gatt-internal-errors-fa89e3f6a456
 % https://punchthrough.com/android-ble-development-tips
 
+\section{Relay Protocol with Bandwidth Accounting}
+
 \chapter{Implementation}
+
+% Android vs. iOS, interoperability
+% Kotlin, Multiplatform - JVM + Android, but can be compiled to Native for iOS as well
+% Android Things – IoT
 
 \section{Project Structure}
 
@@ -183,6 +332,8 @@ In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduc
 \subsection{Discovery Strategies}
 
 \subsection{Endpoints}
+
+\section{Bluetooth Low Energy}
 
 \section{Bootstrap Server}
 
@@ -201,12 +352,13 @@ In Bluetooth 4.0 standard, \textit{Bluetooth Low Energy (BLE)} has been introduc
 
 \section{TrustChain Explorer}
 
-\section{Binary Transfer over UDP}
+%\section{Binary Transfer over UDP}
 
 \section{PeerChat: Distributed Messenger}
 
-\section{Testbed for Distributed Android Applications}
+%\section{Testbed for Distributed Android Applications}
 
+\section{DelftDAO: Framework for Permissionless Economic Activity}
 
 \chapter{Experiment}
 
@@ -264,11 +416,11 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
 % - Vodafone – symmetric NAT, random port mapping, TODO: analyze port distribution
 % - KPN - Address-restricted cone
 
-\section{Performance Evaluation}
+%\section{Performance Evaluation}
 
-\subsection{Bootstrap Performance}
+\section{Bootstrap Performance Evaluation}
 
-\subsection{Stress Test}
+\section{Stress Test}
 
 % experiments:
 % - bootstrap from 0 to 20 peers
@@ -279,3 +431,5 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
 
 \section{Future Work}
 % IPv6 support, multiple network interfaces
+% BLE mesh network
+% Wi-Fi Aware for higher bandwidth Nearby transfer
