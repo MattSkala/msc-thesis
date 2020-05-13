@@ -286,7 +286,7 @@
 \newlength\@cover@fronttextwidth
 \newlength\@cover@fronttextheight
 \newlength\@cover@splitboxwidth
-\setlength\@cover@splitboxwidth{6.375in}
+\setlength\@cover@splitboxwidth{6.475in}
 \newlength\@cover@splitboxheight
 \setlength\@cover@splitboxheight{0.5\paperheight}
 \newlength\@cover@splitboxtextwidth
@@ -438,19 +438,19 @@
           \node at (front top left)[anchor=north west,inner sep=\@cover@margin]{
              \begin{minipage}[t][\@cover@fronttextheight]{\@cover@fronttextwidth}
                  %% Print the title and optional subtitle at the top in white.
-                   {\titlefont\color{\@titlecolor}\fontsize{70}{70}\selectfont\@title}
+                   {\titlefont\color{\@titlecolor}\fontsize{70}{75}\selectfont\@title\par}
                     \ifx\@subtitle\undefined\else
 %                     \\[3mm]
                      \vfill
                      \begin{flushleft}
-                       {\titlefont\color{\@subtitlecolor}\fontsize{45}{45}\selectfont\@subtitle}
+                       {\titlefont\color{\@subtitlecolor}\fontsize{40}{45}\selectfont\@subtitle\par}
                      \end{flushleft}
                    \fi
 
                  %% Print the author.
                    \vfill
 
-                   {\titlefont\color{\@authorcolor}\fontsize{45}{45}\selectfont\@author}
+                   {\titlefont\color{\@authorcolor}\fontsize{40}{45}\selectfont\@author}
                    \ifx\@cover@text\undefined\else
                      \vfill
 

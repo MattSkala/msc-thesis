@@ -1,39 +1,96 @@
 \chapter{Introduction}
 
-// TODO: rewrite introduction
+%The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. %The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet.
+%To deal with address exhaustion, internet providers were forced to deploy \textit{Network Address Translation (NAT)} which allows a single address to be shared across multiple devices, but also makes it difficult to communicate between devices without using additional trusted servers.
 
-The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of \textit{Network Address Translation (NAT)} which allows a single address to be shared across multiple devices.
+The Internet was created with the idea that any two computers connected to the shared network should be able to communicate with each other. It has also been built on the principles of decentralization, without any central entity having power to take the network down. 50 years later, we live in the world where most of the services are centralized and user data are stored on the servers owned by a few large profit-oriented companies.
 
-Another issue appeared with the rise of portable computers and smartphones. IPv4 addresses are dependent on the physical location and can not be considered stable user identifiers. There has been several proposals including Mobile IP, IPSec, and IPv6 to improve the usability and security of the Internet Protocol. However, none of them have been widely deployed yet or address all known issues.
+In the recent years, the idea of decentralization has attracted many in the engineering and research community. Since the introduction of cryptocurrencies in the last decade, there have been many discussions on whether we can decentralize other services, such as social media, or web. With the trend of decentralization, applications are shifting from the client-server model to peer-to-peer, which brings many challenges and calls for a new networking stack.
 
+%Another issue appeared with the rise of portable computers and smartphones. IPv4 addresses are dependent on the physical location and can not be considered stable user identifiers. There have been several proposals
+%to improve the usability and security of the Internet Protocol. However, none of them have been widely deployed or address all known issues.
+
+%including Mobile IP, IPSec, and IPv6
 % TODO: client-server model, but recently trend is decentralization
 
-This thesis proposes and implements a decentralized protocol for peer to peer communication between any two devices. It is implemented in form of a Kotlin library which can be used on desktop, smartphones, tablets, and IoT devices. This library can be used to deploy a truly ubiquitous network overlay which is available anytime and everywhere. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect peers behind NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy. Peers are addressed by their public keys and their physical addresses on lower layers are abstracted away.
+This thesis proposes and implements a protocol for peer to peer communication between any two devices. It is implemented as a Kotlin library which can be used on desktop, smartphones, tablets, and IoT devices. It can be used to deploy a truly ubiquitous network overlay which is available anytime and everywhere. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect peers behind different types of NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy. Peers are addressed by their public keys and their physical addresses at lower layers are abstracted away.
 
-The protocol makes best effort to connect peers behind NATs. However, in case the connection is not possible, it resorts to a relay protocol. Bandwidth accounting prevents misusing the relay servers and provides incentive for relay operators. The protocol is completely decentralized and does not rely on any central entity.
+% The protocol makes best effort to connect peers behind NATs. However, in case the connection is not possible, it resorts to a relay protocol. Bandwidth accounting prevents misusing the relay servers and provides incentive for relay operators. The protocol is completely decentralized and does not rely on any central entity.
 
 %This also allows to route messages over multiple transports. For example, a message can be send over Bluetooth and delivered to a user connected over the Internet by using another device a relay.
 
-To show one of many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows two users to exchange identities in a secure way to prevent MITM attack. Then they can transfer not only text messages, but also images and videos, to demonstrate a binary file transfer.
+% To show one of many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows two users to exchange identities in a secure way to prevent MITM attack. Then they can transfer not only text messages, but also images and videos, to demonstrate a binary file transfer.
 
-Compared to the state of the art solutions, the proposed library combines both nearby and Internet connectivity, does not require any central server, works on a variety of devices, and is completely open source.
+The robustness of the NAT traversal mechanism has been tested by conducting a connectivity check between devices using the networks of major mobile network operators and home broadband providers in the Netherlands. The mechanism has been shown to establish connection in all tested network conditions.
 
-Finally, the protocol performance is experimentally evaluated with multiple Android devices connected to different Wi-Fi and carrier networks and running a stress test over the period of 24 hours.
+To demonstrate the usage of the library, a decentralized messaging application with end-to-end encryption, which allows trustworthy communication insusceptible to the man-in-the-middle attack, has been implemented. To get feedback on the APIs and general usability of the library, 4 teams of MSc students have been asked to develop non-trivial distributed applications on top of it.
+
+Compared to the state of the art solutions, the proposed library combines both nearby and Internet connectivity, does not require any central server, works on a variety of devices under challenging network conditions, and is completely open source.
 
 \iffalse
 \fi
 
 \chapter{Problem Description}
 
+The architecture of the Internet has emerged in an evolutionary process rather than from a carefully designed grand plan. There is no central entity in charge of architectural decisions, or anyone with ability to turn it off. The Internet standards are developed by the working groups of Internet Engineering Task Force (IETF), a non-profit open standards organization composed of volunteers. Its evolution is based on a rough consensus about technical proposals, and on running code. While there are many conflicting opinions on its architecture, the general consensus is that the main goal of the Internet is to provide global connectivity by the \textit{Internet Protocol (IP)}. \cite{internetarchitecture} This ultimate goal requires cooperation of multiple parties, including researchers, developers, and commercial service providers.
+
+% In an ideal world, there would be only one protocol on the Internet level to facilitate seamless integration between service providers, hardware manufacturers, and application developers. However, in practice, multiple protocols need to be supported by the network at the same time, e.g. during periods of transitioning to a newer version of IP.
+
+\section{End-to-End Principle Challenged}
+
+Most decisions related to protocol and system design have for a long time followed the \textit{end-to-end principle}, which states: "The function in question can completely and correctly be implemented only with the knowledge and help of the application standing at the end points of the communication system. Therefore, providing that questioned function as a feature of the communication system itself is not possible." \cite{endtoend}
+
+It implies that the job of the network should be merely to deliver datagrams as efficiently as possible, and the rest of the responsibilities should be pushed to the end points of the communication system. As every application has different requirements, providing additional features on the Internet layer would turn some applications not using those features less efficient. It is also cheaper to upgrade the end points to add new capabilities rather than replace the network infrastructure. A common example for supporting the end-to-end principle are delivery guarantees. In the ARPANET, the receipient would send \textit{Request For Next Message} packet every time a packet was delivered. However, some applications would still need to implement its own acknowledgements on the application level, to indicate that the messages were processed correctly. Similar examples can be found for supporting authentication, encryption, and other guarantees in communication systems.
+
+The end-to-end principle has been challenged by introduction of \textit{middleboxes}, intermediary nodes in the network that perform functions different from functions of a regular IP router. In \cite{rfc3234}, an extensive catalogue of 22 different middlebox classes has been analyzed. Network address translators (NATs), packet classifiers, IP firewalls, application layer gateways, or proxies are just a few examples of components hidden in the network. While most of them try to be transparent, the behavior of certain middleboxes can severly impact the end-to-end performance, either by delaying packet retransmission, or aborting user sessions entirely in case they crash. Some of them perform advanced logic on different protocol layers and keep a hard state, which violates the end-to-end principle stating that the network should be kept as simple as possible.
+
+\section{Overcoming Address Exhaustion}
+
+In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of NATs which allows a single address to be shared across multiple devices.
+
+Traditionally, each consumer would have a NAT implemented in the router located at the edge of the network. We will refer to this case as a customer premises equipment NAT (CPE NAT). It would serve as a gateway between the local area network (LAN) and the wide area network (WAN), the Internet. This type of NAT usually maps all addresses inside LAN to a single external WAN address. It also provides additional features such as firewall, which only allows incoming traffic on ports that are explicitly open, or on whose the client initiated the communication first.
+
+However, to further conserve the address space, and facilitate transitions to IPv6 with backwards compatibility of IPv4, it has become a trend among internet service providers to implement a NAT in their infrastructure. This topology is called a \textit{carrier-grade NAT} (CGN). This is especially used in mobile networks, where there is no place to implement NAT on customer premises. This allows all subscribers connected to the same gateway to share a pool of private network addresses which are then translated by NAT to an external address. This scenario is also called \textit{NAT444}, as the address is translated twice along the route and the packets pass through 3 different addressing domains: the customer's private network, the carrier's provate network, and the public Internet. Another possible topology is \textit{Dual-Stack Lite} (DS-Lite) which can be used as a transition mechanism from IPv4 to IPv6. In DS-Lite, the carrier's network uses IPv6 addresses which get translated to IPv4 for the public Internet.
+
+Carrier-grade NAT is by definition managed by the network operator and the customer does not have any control over it. CGN usually implement a complex functionality to ensure reliability for thousands subscribers and compliance with legal regulations, which again violates the end-to-end principle. Inability to manage open ports breaks the communication model of many peer-to-peer applications which usually have to reside to using a proxy server for relaying communication. To mitigate this issue, \textit{Port Control Protocol (PCP)} \cite{pcp} has been designed and recommended by IEFT to enable port forwarding in CGN deployments. However, our experiments have shown that most providers do not have this mechanism deployed at the moment and that some providers have deployed a version of CGN that does not satisfy NAT behavioral requirements \cite{behave}, which makes P2P communication nearly impossible.
+
 %\section{Ubiquitous Overlay Network}
 
-\section{End-to-end Principle Challenged}
+%\section{Net Neturality Under Attack}
 
-\section{Net Neturality Under Attack}
+\section{Freedom of Trustworthy Communication}
 
-\section{In Quest of Trustworthy Communication}
+The principle of network neutrality states that ISPs must treat all traffic equally and not discriminate based on its content, addresses of recipients, or methods of communication. However, we can see that this principle is violated in many cases, some of them more worrying than others. There are several countries that enforce Internet censorship either by simple IP address blocking, or advanced deep packet inspection, preventing people from communicating freely.
+
+Even in places with relatively mature infrastructure, there are occasionally connectivity issues at places with high gatherings of people, such as conferences or festivals, causing congestion in the infrastructure networks. The increasing capabilities of smartphones and novel wireless networking technologies open up possibilities to a whole new range of applications that can communicate without the need for the Internet connection. The ideal communication protocol should be able to use those when possible. It has been seen how the Bluetooth technology can be useful in creating a mesh network during the Hong Kong protests in 2018 and 2019, where protesters relied on peer-to-peer communication apps as a communication tactic.
+
+Another problem related to communication is ensuring message authenticity and privacy. Most of the commonly used protocols have adopted \textit{Transport Layer Security (TLS)} protocol to secure all communication between clients and servers. The trust in the system is enforced by using \textit{public key infrastructure (PKI)} with trusted certificate authorities. However, public key infrastructure is not easy to adopt to a peer-to-peer system with self-sovereign identities.
 
 \section{Re-decentralization of Internet Infrastructure}
+
+While the Internet is built on the principles of decentralization from the ground up, we cannot say so about the Web and other services built on top of it. The majority of the websites is operated by a few hosting companies and most of the static content is served by a few \textit{Content Delivery Networks (CDNs)}. For example, \textit{Cloudflare} currently powers 10 \% of all internet traffic\footnote{https://blog.cloudflare.com/cloudflare-traffic/}. Since there is a central point of failure, if a provider experiences outage, a large part of the internet goes down.
+
+The inventor of the World Wide Web has proposed a Solid \cite{solid} as an architectural pattern for building the next generation of decentralized social applications. It is based on the principle that users own their data and have freedom of choice where to store them, which significantly improves privacy and data reusability. As the application logic is decoupled from the data storage servers, multiple applications can access them same data if allowed by the user.
+
+\newpage
+
+\section{Research Question}
+
+While it is out of scope of this thesis to provide a complete solution for the next generation of web applications, the afore-mentioned problems and challenges lead us to the following question:
+
+\begin{itemize}
+    \item \textbf{Can we devise a protocol facilitating trustworthy device-to-device communication between smartphones under challenging network conditions without using a central server?}
+\end{itemize}
+
+We analyze the question in more detail:
+\begin{itemize}
+    \item The communication should be \textbf{trustworthy}, which means we can verify that we received the message from the person that claims to be its sender. The communication can be optionally encrypted to provide privacy on top of authenticity.
+    \item The communication should be facilitated \textbf{device-to-device} without need for any additional \textbf{server} infrastructure, with the exception of the initial bootstrap server. The bootstrap server should not be needed if there are peers in proximity which can be used for bootstrapping.
+    \item The protocol should be able to work under \textbf{challenging network conditions}, which means it should be robust against the presence of various middleboxes. Mainly, it should be able to establish connection in presence of carrier-grade NATs deployed by mobile network operators.
+    \item The communication protocol should in theory work on both most popular \textbf{smartphone} operating systems and support their most commonly used versions. However, supporting only the most commonly used OS would be sufficient for the prototype.
+\end{itemize}
+
+% TODO: mention SOLID
 
 % history of internet, IPv4
 % address exhaustion, mobility
@@ -135,10 +192,28 @@ It is notable that once an application is granted a Bluetooth permission, it can
 
 \subsection{Wi-Fi Direct}
 
+There have been many attempts to enable direct communication between IEEE 802.11 radio devices. The 802.11 standard defines two operating modes. Next to the traditional \textit{infrastructure} mode, there is an \textit{ad-hoc} mode which allows device-to-device communication. However, the ad-hoc mode is not supported by Android OS, even though it can be enabled on some devices with a root access.
+
+\textit{Wi-Fi Direct} (also known as Wi-Fi Peer-to-Peer) \cite{wifip2p} is a IEEE 802.11 based protocol released by Wi-FI Alliance in 2009 and supported from Android 4.0. With Wi-Fi direct, devices are organized in groups, where one device is the Group Owner (GO) and the rest are Group Members (GM). The roles are not predefined, but are negotiated during the group formation process. Groups are able to support Legacy Clients (LC), which means that even devices without Wi-Fi Direct support can join as group members.
+
+\subsubsection{Multi-group communication}
+
+The standard only defines intra-group communication, but it does not restrict a Group Member from participating in multiple groups simultaneously. Moreover, a device can theoretically connect both to Wi-Fi Direct and an infrastructure network by using multiple virtual MAC entities. However, these functionalities are not defined by the standard and thus depend on the implementation.
+%\subsubsection{Limitations of Android}
+In Android, the GO always has the same hardcoded IP address (192.168.49.1), while GM are assigned a random address from the same subnet (192.168.49.2-254). As a result, the scenario where the device would act in multiple groups at the same time cannot be directly implemented.
+
+There are several workarounds proposed in \cite{FunaiTH16}. The first solution is to use \textit{time sharing} to allow a device to act as a gateway between multiple groups. It requires a device to periodically disconnect and reconnect to different groups and effectively act as a relay passing messages between multiple groups.
+Another solution takes advantage of \textit{simultaneous connections} using Wi-Fi Direct and the traditional Wi-Fi. The GO advertises its group using a unique Service Set ID (SSID) that can be used by other clients not supporting the framework to join the group. Experiments have shown that it is possible to create a LC/GM gateway node when communicating using multicast UDP datagram sockets. Due to routing-related issues, this solution does not work with traditional datagram or stream sockets. The authors also propose a more efficient \textit{hybrid} protocol that uses multicast sockets as a control channel that triggers gateway configuration change if needed. However, all solutions rely on undocumented behaviors, which means their reliability can vary across devices or Android OS versions.
+
 \subsection{Wi-Fi Aware}
 
+\textit{Wi-Fi Aware}, also known as \textit{Neighbor Awareness Networking} (NAN) is a recent networking standard introduced by Wi-Fi Alliance. \cite{wifiaware} It works by forming clusters with nearby devices. The discovery process starts when one device (a \textit{publisher}) publishes a discoverable service. Other devices (\textit{subscribers}) who subscribe to the same service will receive a notification once a matching publisher is discovered. After the subscriber discovers a publisher, it can either send a short message or establish a network connection with the device. A device can be both a subscriber and a publisher simultaneously.
 
 \subsection{Support in Operating Systems}
+
+% Describe support on different versions of Android
+% iOS supports MultipeerConnectivity, no direct access to Wi-Fi Direct
+% Bluetooth classic not interoperable, Bluetooth Low Energy the only tech suitable for multiplatform communication
 
 \begin{table}
     \centering
@@ -193,9 +268,43 @@ It is notable that once an application is granted a Bluetooth permission, it can
 
 \chapter{Design}
 
+\section{ Goals and Considerations}
+
+\subsection{Reliable vs. Unreliable Transport}
+
+\subsection{UDP Socket Multiplexing}
+
+\subsection{Authentication and Encryption}
+
+\subsection{Peer Discovery}
+
+%\subsection{NAT Traversal}
+
 %\section{NAT Detection}
 
 \section{NAT Traversal with Peer Introductions}
+
+One of the traditional NAT traversal methods called \textit{UDP hole punching} allows to establish UDP connectivity between two peers when both of them are hidden behind a NAT. It is based on the concept that both peers fire a UDP packet targeted at each other at the same time. This first packet creates a mapping entry in the sender's NAT and allows subsequent incoming packets to be delivered. This process can also be seen as opening a \textit{hole} in the firewall, which explains the term \textit{hole punching}.
+
+IPv8 implements a decentralized variant of UDP hole punching mechanism integrated with the peer discovery process, which has been previously described in \cite{nat_wild} and \cite{dispersy}. The complete peer discovery protocol consists of 4 messages and it is visualized in Figure \ref{nat-puncturing}.
+
+After reviewing the py-ipv8 implementation, it has been discovered that it only works reliably when all nodes are behind different NATs. This is because of the fact that the tracker only stores WAN addresses which are then used for peer introductions, and peers always use their WAN address for communication. When multiple nodes are located behind the same NAT, they can still commnicate in case their NAT supports hairpinning, but this is not always the case. There is no mechanism to discover other peers on the same LAN without using a tracker, and there is no way to use LAN addresses for communication. We will fix this flaw by reusing some additional fields which are already present in the IPv8 packet format probably for legacy reasons, but are not currently used. Thanks to that, the updated protocol is still backwards compatible and can be used to connect to peers using older versions of the protocol. The updated protocol works as follows:
+
+\begin{enumerate}
+    \item When Alice wants to connect to a new peer in a specific community, it can send an \textit{introduction request} to a tracker, or any other peer present in the community. The introduction request should contain the community ID representing the ID of the community in which Alice wants to find a new peer, and her LAN and WAN address.
+    \item We assume Alice sends an introduciton request to Bob. Bob selects a random peer (Charlie) from the requested community, and sends a \textit{puncture request} to him. The puncture request contains the WAN address of Alice.
+    \item At the same time, Bob sends an \textit{introduction response} back to Alice. The introducion response contains LAN and WAN address of Charlie.
+    \item As soon as Charlie receives a puncture request, he should send out a packet to the WAN address of Alice. That will create a mapping in his NAT, so Alice would be able to contact him.
+    \item Alice then keeps sending introduction requests to Charlie's WAN address for a specified interval. After Charlie sends out a puncture packet, the next introduction request should reach him. She can also try to contact him over LAN if they reside in the same subnet.
+    \item Charlie should respond to the introduction request with an introduction response, in which he include another peer for introduction. Upon receiving an introduction request or response, the receiver should add the sender to their verified peer list.
+\end{enumerate}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{diagrams/nat-puncturing}
+    \caption{Peer discovery mechanism with NAT traversal}
+    \label{nat-puncturing}
+\end{figure}
 
 
 %\begin{figure}
@@ -204,11 +313,24 @@ It is notable that once an application is granted a Bluetooth permission, it can
 %    \caption{Peer discovery mechanism with NAT puncturing}
 %\end{figure}
 
-%\section{Port Forwarding}
-
 %\section{Symmetric NAT Traversal}
 
 % \section{Network Service Discovery}
+
+\clearpage
+
+\section{Symmetric NAT Traversal}
+
+\subsection{NAT Type Detection}
+
+\subsection{Extended Peer Introduction Protocol}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{diagrams/symmetric-nat-puncturing}
+    \caption{The flow diagram of the symmetric NAT traversal protocol}
+\end{figure}
+
 
 \clearpage
 
@@ -316,7 +438,7 @@ The connection manager contains all GATT-related communication logic. Each devic
 % https://blog.classycode.com/a-short-story-about-android-ble-connection-timeouts-and-gatt-internal-errors-fa89e3f6a456
 % https://punchthrough.com/android-ble-development-tips
 
-\section{Relay Protocol with Bandwidth Accounting}
+% \section{Relay Protocol with Bandwidth Accounting}
 
 \chapter{Implementation}
 
@@ -330,23 +452,44 @@ The connection manager contains all GATT-related communication logic. Each devic
 % unit tests, TODO: Android tests
 % library vs. super app separation
 
+% \section{Maintaining Backward Compatibility}
+% continuous improvement while maintaining backward compatibility with 10 year old ipv8 implementation
+
 \section{System Architecture}
 
-\subsection{Communities}
+\section{Communities}
 
-\subsection{Discovery Strategies}
+\subsection{Community}
 
-\subsection{Endpoints}
+\subsection{Discovery Community}
 
-\section{TrustChain: Scalable Accounting Mechanism}
+\section{Discovery Strategies}
 
-% \section{Bluetooth Low Energy}
+\subsection{Random Walk}
+
+\subsection{Random Churn}
+
+\subsection{Periodic Similarity}
+
+\subsection{Bluetooth Discovery Strategy}
+
+\section{Endpoints}
+
+\subsection{Endpoint Aggregator}
+
+\subsection{UDP Endpoint}
+
+\subsection{TFTP Endpoint}
+
+\subsection{Bluetooth Endpoint}
 
 \section{Bootstrap Server}
 
-%\section{Bluetooth Ad-Hoc Network}
-%\subsection{Bluetooth Low Energy}
-%\subsection{Generic Attribute Profile}
+\section{PeerChat: Distributed Messenger}
+
+\section{TrustChain: Scalable Accounting Mechanism}
+
+%\section{Bluetooth Communication}
 
 %\section{Multi-Transport Routing Algorithm}
 
@@ -354,14 +497,9 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 %\section{Packet Format}
 
-\section{Maintaining Backward Compatibility}
-% continuous improvement while maintaining backward compatibility with 10 year old ipv8 implementation
-
-\section{TrustChain Explorer}
+\subsection{TrustChain Explorer}
 
 %\section{Binary Transfer over UDP}
-
-\section{PeerChat: Distributed Messenger}
 
 %\section{Testbed for Distributed Android Applications}
 
@@ -371,18 +509,18 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 \section{Analysis and Puncturing of Carrier Grade NAT}
 
-According to the report by Statista \cite{statista:marketshare}, there were three major mobile phone operators providing services in the Netherlands in Q4 2018. They are listed in Table \ref{table_marketshare}. In total, these represent up to 85 \% of the market share. The rest of the market is shared by Mobile Virtual Network Operators who sell services over existing networks of those three operators.
+According to the report by Statista \cite{statista:marketshare}, there were three major mobile phone operators providing services in the Netherlands in Q4 2018, as listed in Table \ref{table_marketshare}. In total, these represent up to 85 \% of the market share. The rest of the market is shared by Mobile Virtual Network Operators who sell services over existing networks of those three operators.
 
-\begin{table}[h!]
+\begin{table}
     \centering
     \begin{tabular}{ | l | c | }
         \hline
         \textbf{Operator} & \textbf{Market share} \\
         \hline
-        KPN & 35\% \\
-        Vodafone & 25\% \\
-        Mobile Virtual Network Operators & 25\% \\
-        T-Mobile & 20\% \\
+        \textbf{KPN} & 35\% \\
+        \textbf{Vodafone} & 25\% \\
+        \textbf{Mobile Virtual Network Operators} & 25\% \\
+        \textbf{T-Mobile} & 20\% \\
         \hline
     \end{tabular}
     \caption{Market share of mobile network operators in the Netherlands in Q4 2018. The shares do not sum up to 100\% as they are rounded up within five percent ranges in the original report. \cite{statista:marketshare}}
@@ -393,13 +531,12 @@ We have purchased pre-paid SIM cards for all three major mobile network operator
 
 We used the STUN protocol and NAT behavior discovery mechanisms described in \cite{rfc5780}. They have shown that all networks appear to use \textit{Endpoint-Independent Mapping (EIM)} and \textit{Address and Port-Dependent Filtering} (also known as \textit{port-restricted cone NAT}). EIM is a sufficient condition for our NAT traversal mechanism to be successful, so this would make all these NATs suitable for P2P communication.
 
-However, as NAT behavior can change over time, we performed some more tests to verify that the behavior is consistent over time. We attempted to connect to 50 different peers over the interval of 5 minutes. We verified that KPN and T-Mobile networks are consistent with EIM behavior. However, the Vodafone network changes the mapped port for new connections approximately every 60 seconds, even when connecting to the same IP address and a different port. This behavior can be described as \textit{Address and Port-Dependent Mapping}, which is characteristic for a \textit{symmetric NAT}.
+However, we also observed that NAT behavior of CGN can change over time, so STUN behavior discovery mechanism is not sufficient to correctly classify CGN behavior. We performed some more tests to verify if the behavior is consistent over time. We attempted to connect to 50 different peers over the interval of 5 minutes. We verified that KPN and T-Mobile networks are consistent with EIM behavior. However, the CGNAT used by Vodafone changes the port mapping for new connections approximately every 60 seconds, even when connecting to the same IP address and a different port. While not strictly correct due to temporal dependency, this behavior could be classified as \textit{Address and Port-Dependent Mapping (APDM)} which is characteristic for a \textit{symmetric NAT}.
 
 The mapped ports seem to be assigned at random from the range of 10,000 ports, which makes it infeasible to use any known symmetric NAT traversal techniques such as port prediction or multiple hole punching \cite{multihole}\cite{takeda}.
 
 %The results are presented in Table \ref{table_cgnat_analysis}.
 
-\iffalse
 
 \begin{table}[h!]
     \centering
@@ -407,16 +544,15 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
         \hline
         \textbf{Operator} & \textbf{Mapping behavior} & \textbf{Filtering behavior} & \textbf{Binding lifetime} \\
         \hline
-        KPN & Endpoint-Independent & Address and Port-Dependent & ? \\
-        Vodafone & Endpoint-Independent / Address and Port-Dependent & Address and Port-Dependent & ? \\
-        T-Mobile & Endpoint-Independent & Address and Port-Dependent & ? \\
+        \textbf{KPN} & EIM & APDF & ? \\
+        \textbf{Vodafone} & APDM & APDF & ? \\
+        \textbf{T-Mobile} & EIM & APDF & ? \\
         \hline
     \end{tabular}
     \caption{Characteristics of CGNATs deployed by Dutch mobile network operators}
     \label{table_cgnat_analysis}
 \end{table}
 
-\fi
 
 % Types of NAT used by different operators
 % - T-Mobile - Address-restricted cone
@@ -424,6 +560,41 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
 % - KPN - Address-restricted cone
 
 %\section{Performance Evaluation}
+
+\section{Connectivity Test}
+
+\subsection{Experimental Setup}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{diagrams/experimental-setup}
+    \caption{The experimental setup for the connectivity test using devices connected to different mobile (T-Mobile, KPN, Vodafone) and home broadband (Tele2, T-Mobile Thuis) ISP networks.}
+    \label{ble_architecture}
+\end{figure}
+
+
+\subsection{Results}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ | l | c | c | c | c | c | }
+        \hline
+        \textbf{} & \textbf{T-Mobile} & \textbf{KPN} & \textbf{Vodafone} & \textbf{Tele2} & \textbf{T-Mobile Thuis} \\
+        \hline
+        \textbf{T-Mobile} & \cellcolor{yellow!25}? &  &  &  &  \\
+        \hline
+        \textbf{KPN} & \cellcolor{green!25}1& \cellcolor{yellow!25}? &  &  &  \\
+        \hline
+        \textbf{Vodafone} & \cellcolor{yellow!25}1 & \cellcolor{green!25}1 & \cellcolor{yellow!25}? &  &  \\
+        \hline
+        \textbf{Tele2} & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \\
+        \hline
+        \textbf{T-Mobile Thuis} & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 \\
+        \hline
+    \end{tabular}
+    \caption{The connectivity matrix representing the success rate of connection establishment between devices connected via different ISPs.}
+    \label{table_cgnat_analysis}
+\end{table}
 
 \section{Bootstrap Performance Evaluation}
 
@@ -440,3 +611,5 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
 % IPv6 support, multiple network interfaces
 % BLE mesh network
 % Wi-Fi Aware for higher bandwidth Nearby transfer
+% DHT + routing
+% WebRTC transport
