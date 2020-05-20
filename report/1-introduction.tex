@@ -125,6 +125,7 @@ We analyze the question in more detail:
 \section{Network Address Translation}
 
 \subsection{NAT Classification}
+\label{nat-classification}
 
 % Mapping: Endpoint-Independent, Address-Dependent, Address- and Port-Dependend
 % Filtering: Endpoint-Independent, Address-Dependent, Address- and Port-Dependend
@@ -139,18 +140,22 @@ We analyze the question in more detail:
 
 % NAT detection in STUN
 
+\subsection{Hairpinning}
+
 \subsection{Carrier Grade NAT}
+
+\section{NAT Traversal}
 
 \subsection{Port Forwarding}
 
 % mention protocols for port forwarding configuration: UPnP-IGD, NAT-PMP, PCP
 % usually not enabled by default, not enabled in carrier networks
 
-\section{NAT Traversal}
-
 \subsection{Session Traversal Utilities for NAT (STUN)}
 
-\subsection{Traversal Using Relays around NAT (TURN)}
+\subsection{NAT Behavior Discovery Using STUN}
+
+\subsection{Traversal Using Relays Around NAT (TURN)}
 
 \subsection{Interactive Connectivity Establishment (ICE)}
 
@@ -307,21 +312,46 @@ After reviewing the py-ipv8 implementation, it has been discovered that it only 
 \end{figure}
 
 
-%\begin{figure}
-%    \centering
-%    \includegraphics[width=0.6\textwidth]{diagrams/uml_peer-introduction}
-%    \caption{Peer discovery mechanism with NAT puncturing}
-%\end{figure}
-
-%\section{Symmetric NAT Traversal}
-
-% \section{Network Service Discovery}
-
-\clearpage
-
 \section{Symmetric NAT Traversal}
 
+Our method provided in the previous section allows us to traverse around NATs that perform endpoint-independent mapping. However, as previously discussed in Section \ref{nat-classification}, peers behind NAT with address-dependent mapping would only be able to connect to public peers that do not require NAT traversal. This poses a major threat to our goal of global connectivity.
+
+
+\subsection{Topological Assumptions}
+
+Inspired by the previously discussed symmetric NAT traversal methods, we have extended our peer introduction protocol to work with some additional NAT behaviors that we encountered during our experimental evaluation of CGN deployments. For the further discussions, we consider three different cases with respect to NAT topology between two different peers A and B:
+
+\subsubsection{Case 1: One peer behind a symmetric NAT}
+
+\begin{enumerate}
+    \item Peer A is behind a NAT with endpoint-independent mapping.
+    \item Peer B is behind a NAT with endpoint-independent IP address mapping, but an arbitrary port mapping behavior.
+    \item Peer B can estimate a session limit implemented by their NAT. By default, the algorithm first assumes there is no limit. In case the first traversal attempt fails, then it falls back to the default limit of 1.000 sessions with a 30-second timeout. This limit has been empirically shown to be successful in all scenarios considered in our experiments. However, the peer should have an option to tweak this parameter if they believe their NAT implements more permissive or restricted behavior.
+\end{enumerate}
+
+\subsubsection{Case 2: Both peers behind symmetric NATs without a session limit}
+\begin{enumerate}
+    \item Both peers are behind a NAT with endpoint-independent IP address mapping, but an arbitrary port mapping behavior.
+    \item There is no session limit implemented by any of the NATs.
+\end{enumerate}
+
+\subsubsection{Case 3: Both peers behind symmetric NATs with a session limit}
+\begin{enumerate}
+    \item Both peers are behind a NAT with endpoint-independent IP address mapping, but an arbitrary port mapping behavior.
+    \item There is a session limit implemented by one or both of the NATs.
+\end{enumerate}
+
+In this case, we need to send packets at the frequency restricted by the session limit. However, as port mappings can frequently change on both sides due to a binding timeout, there is no guarantee when both peers will find find the port mapping. We can keep trying opening ports at random, hoping both peers will meet eventually.
+%The statistical model shown in Figure ? shows the probability that the connection will be established based on port discovery process duration.
+It is questionable whether it makes sense to support this case, as the effort of establishing the connection might not meet the benefits. It would make sense for long-lived connections that are kept alive for a long period. However, we expect mobile connections to be mostly temporary, so this case has not been implemented while it is theoretically feasible.
+
+Even in the extreme case when the NAT assigns ports completely at random, our NAT traversal mechanism should still work.
+
+The problem is that when a peer A is connecting to peer B behind a symmetric NAT, the peer A does not have a way to find out the public port of peer B.
+
 \subsection{NAT Type Detection}
+
+We would like to have a fully automated NAT traversal. For that, we need a mechanism to decide whether to perform a simple UDP hole punching, or there is a need for an extended multiple UDP hole punching method. We try to detect the NAT type based on its behavioral properties. We keep a log of triples consisting of our LAN address, our WAN address, and peer address. When we detect our LAN address has been mapped to multiple WAN addresses as reported by different remote peers, we can conclude we are located behind a symmetric NAT. Otherwise, we report our NAT type as \textit{unknown}, as it is not necessary to know the exact NAT type for the purposes of UDP hole punching.
 
 \subsection{Extended Peer Introduction Protocol}
 
@@ -331,6 +361,8 @@ After reviewing the py-ipv8 implementation, it has been discovered that it only 
     \caption{The flow diagram of the symmetric NAT traversal protocol}
 \end{figure}
 
+
+\section{Relay Protocol with Bandwidth Accounting}
 
 \clearpage
 
@@ -437,8 +469,6 @@ The connection manager contains all GATT-related communication logic. Each devic
 % https://stefanbossbaly.com/2018/08/06/ble-in-android
 % https://blog.classycode.com/a-short-story-about-android-ble-connection-timeouts-and-gatt-internal-errors-fa89e3f6a456
 % https://punchthrough.com/android-ble-development-tips
-
-% \section{Relay Protocol with Bandwidth Accounting}
 
 \chapter{Implementation}
 
@@ -613,3 +643,4 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
 % Wi-Fi Aware for higher bandwidth Nearby transfer
 % DHT + routing
 % WebRTC transport
+% multidevice support, key revocation chain
