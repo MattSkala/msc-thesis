@@ -48,11 +48,13 @@ The end-to-end principle has been challenged by introduction of \textit{middlebo
 
 In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of NATs which allows a single address to be shared across multiple devices.
 
-Traditionally, each consumer would have a NAT implemented in the router located at the edge of the network. We will refer to this case as a customer premises equipment NAT (CPE NAT). It would serve as a gateway between the local area network (LAN) and the wide area network (WAN), the Internet. This type of NAT usually maps all addresses inside LAN to a single external WAN address. It also provides additional features such as firewall, which only allows incoming traffic on ports that are explicitly open, or on whose the client initiated the communication first.
+Traditionally, each consumer would have a NAT implemented in the router located at the edge of the network. It would serve as a gateway between the local area network (LAN) and the wide area network (WAN), the Internet. This type of NAT usually maps all addresses inside LAN to a single external WAN address. It also provides additional features such as firewall, which only allows incoming traffic on ports that are explicitly open, or on whose the client initiated the communication first.
 
-However, to further conserve the address space, and facilitate transitions to IPv6 with backwards compatibility of IPv4, it has become a trend among internet service providers to implement a NAT in their infrastructure. This topology is called a \textit{carrier-grade NAT} (CGN). This is especially used in mobile networks, where there is no place to implement NAT on customer premises. This allows all subscribers connected to the same gateway to share a pool of private network addresses which are then translated by NAT to an external address. This scenario is also called \textit{NAT444}, as the address is translated twice along the route and the packets pass through 3 different addressing domains: the customer's private network, the carrier's provate network, and the public Internet. Another possible topology is \textit{Dual-Stack Lite} (DS-Lite) which can be used as a transition mechanism from IPv4 to IPv6. In DS-Lite, the carrier's network uses IPv6 addresses which get translated to IPv4 for the public Internet.
+% TODO: Decide whether to stay here or in state of the art
 
-Carrier-grade NAT is by definition managed by the network operator and the customer does not have any control over it. CGN usually implement a complex functionality to ensure reliability for thousands subscribers and compliance with legal regulations, which again violates the end-to-end principle. Inability to manage open ports breaks the communication model of many peer-to-peer applications which usually have to reside to using a proxy server for relaying communication. To mitigate this issue, \textit{Port Control Protocol (PCP)} \cite{pcp} has been designed and recommended by IEFT to enable port forwarding in CGN deployments. However, our experiments have shown that most providers do not have this mechanism deployed at the moment and that some providers have deployed a version of CGN that does not satisfy NAT behavioral requirements \cite{behave}, which makes P2P communication nearly impossible.
+However, to further conserve the address space, and facilitate transitions to IPv6 with backwards compatibility of IPv4, it has become a trend among internet service providers to implement a NAT in their infrastructure. This topology is called a \textit{carrier-grade NAT} (CGN). Carrier-grade NAT is by definition managed by the network operator and the customer does not have any control over it. CGN usually implement a complex functionality to ensure reliability for thousands subscribers and compliance with legal regulations, which again violates the end-to-end principle. Inability to manage open ports breaks the communication model of many peer-to-peer applications which usually have to reside to using a proxy server for relaying communication.
+
+To mitigate this issue, \textit{Port Control Protocol (PCP)} \cite{pcp} has been designed and recommended by IEFT to enable port forwarding in CGN deployments. However, our experiments have shown that most providers do not have this mechanism deployed at the moment and that some providers have deployed a version of CGN that does not satisfy NAT behavioral requirements \cite{behave}, which makes P2P communication nearly impossible.
 
 %\section{Ubiquitous Overlay Network}
 
@@ -124,40 +126,114 @@ We analyze the question in more detail:
 
 \section{Network Address Translation}
 
+\textit{Network Address Translation} (NAT) is a method of mapping addresses from one address space into another by modifying the IP header of a packet on its way from the source to the destination. It has been originally proposed as a temporary solution to slow down IPv4 address space exhaustion, until a better solution is implemented. \cite{nat} Yet, it has become so ubiquitous in the Internet infrastructure that almost all end users are located behind a NAT nowadays.
+
+NAT is designed to be fully transparent when using the client–server communication model. However, it creates major obstacles to peer-to-peer and VoIP applications, where end user devices need to establish direct connections without using a third-party server. This topic has been estensively researched and still, fragile workarounds are required to support direct communication between users behind NAT boxes. This hurdle could be one of the reasons why the server-centric model, which deviates from the original ideology of the Internet, has prevailed in most of the services we use today.
+
 \subsection{NAT Classification}
 \label{nat-classification}
 
-% Mapping: Endpoint-Independent, Address-Dependent, Address- and Port-Dependend
-% Filtering: Endpoint-Independent, Address-Dependent, Address- and Port-Dependend
+The original proposal did not specify the exact behavioral requirements of a NAT, so hardware manufacturers had to decide a lot of implementation details on their own. This has resulted in fragmentation and many different NAT behaviors with different levels of restrictions. However, in general, most NATs can be classified according to their \textit{address and port mapping} and \textit{filtering} behavior \cite{behave}.
 
-% Most common implementations (TODO: show table with mapping and filtering behavior):
-% - Full Cone NAT
-% - Restricted Cone NAT
-% - Port Restricted Cone NAT
-% - Symmetric NAT
+We define an \textit{endpoint} as a pair of an IP address and port. When a packet is sent by an internal endpoint located behind a NAT to any endpoint on the public Internet, the internal endpoint is mapped to an external endpoint and a mapping is created on the NAT box. We can then classify the following mapping behaviors based on how mappings are reused when communicating with different endpoints:
 
-% Hairpinning
+\begin{itemize}
+    \item \textbf{Endpoint-Independent Mapping (EIM)}: The NAT reuses the mapping for any packets sent from the same internal endpoint to any external IP address and port.
+    \item \textbf{Address-Dependent Mapping (ADM)}: The NAT reuses the mapping for packets sent from the same internal endpoint to the same external address (using any external port).
+    \item \textbf{Address and Port-Dependent Mapping (APDM)}: The NAT reuses the mapping only for packets sent from the same internal IP address and port to the same external address and port.
+\end{itemize}
+
+
+When an endpoint sends a packet to our external endpoint, it gets translated based on the mapping stored by the NAT. However, NAT can also discard any incoming packet based on its filtering behavior:
+
+\begin{itemize}
+    \item \textbf{Endpoint-Independent Filtering (EIF)}: The NAT filters out only packets not destined to the internal endpoint. Therefore, when an internal endpoint creates a mapping by sending a packet to any endpoint, it can then receive packets from any endpoint sending a packet to its external address and port.
+    \item \textbf{Address-Dependent Filtering (ADF)}: The NAT only allows incoming packets from an address to which an internal endpoint has previously sent a packet.
+    \item \textbf{Address and Port-Dependent Filtering (APDF)}: The NAT only allows incoming packets from an address and port to which an internal endpoint has previously sent a packet.
+\end{itemize}
+
+While EIM is the least restrictive mapping behavior, it is also the required behavior by \cite{behave} to ensure the correct functionality of many applications. It has been previously measured that around 79\% peers on the Internet are not directly connectable and require further mechanisms to establish connectivity. Also, 11\% of peers were found behind a NAT with AP(D)M which does not support common NAT traversal mechanisms. \cite{nat_wild} However, it can be hoped that the manufacturers start to comply with the NAT behavioral requirements, so the number of non-connectable nodes will decrease over time as NAT boxes are upgraded and networks transfer to IPv6.
 
 % NAT detection in STUN
 
 \subsection{Hairpinning}
 
+\textit{Hairpinning} is a  mechanism that allows two hosts located behind the same NAT to communicate with each other using external addresses. The NAT should correctly recognize such packets and re-route them back to the local network. While it is required by \cite{behave} for NATs to implement this behavior, its support varies among manufacturers are NAT box models. Therefore, a robust networking library should not rely on this property and should use LAN addresses to communicate with peers on the same local area network.
+
+% \subsection{Binding Timeout}
+
 \subsection{Carrier Grade NAT}
+
+Traditionally, each consumer had a NAT implemented in the router located at the edge of the network. However, to further conserve the address space, and facilitate transitions to IPv6 with backwards compatibility of IPv4, it has become a trend among internet service providers to implement a NAT in their infrastructure. This topology is called a \textit{carrier grade NAT (CGN)}. It is especially used in mobile networks, as it allows all subscribers connected to the same gateway to share a pool of private network addresses which are then translated by NAT to an external address.
+
+When the CGN is deployed in home broadband, there usually already is a NAT implemented on consumer premises. This scenario is then called \textit{NAT444}, as the address gets translated twice along the route and the packets pass at least through 3 different addressing domains: the customer's private network, the carrier's private network, and the public Internet. Another common topology is \textit{Dual-Stack Lite (DS-Lite)} which can be used as a transition mechanism from IPv4 to IPv6. In DS-Lite, the carrier's network uses IPv6 addresses which get translated to IPv4 for the public Internet.
+
+CGN is by definition managed by the network operator, and the customer does not have any control over it. Its implementation is usually complex enough to provide scalability and ensure reliability for thousands subscribers and compliance with legal regulations, which again violates the end-to-end principle by keeping too much state in the network. Inability to manage open ports breaks the communication model of many peer-to-peer applications which usually have to reside to using a proxy server for relaying communication.
 
 \section{NAT Traversal}
 
+THe NAT traversal refers to a set of techniques used to establish a connection between devices behind NATs. Usually, a help of a third party is needed to establish a connection, but the subsequent communication takes place directly between interested devices.
+Most of the solutions are based on the UDP transport protocol, due to its simplicity. While there are NAT traversal methods for TCP as well, they are much more complex and less reliable, so we will not consider them further.
+
 \subsection{Port Forwarding}
+
+Seemingly the most correct way to allow incoming traffic would be to manually create a mapping in the NAT and allow incoming traffic for the mapped port in the firewall. However, this requires considerable effort from the user side and it cannot be expected that regular users are also network administrators.
+
+Several protocols have been proposed for automatic port forwarding configuration which could be used by applications to open desired ports without user interaction and find out the mapped public address.
+
+One of such protocols is \textit{Universal Plug and Play (UPnP) Internet Gateway Device Protocol (IGDP)}. It allows to list existing port mappings, add or remove them, and learn an external IP address. It is sometimes used by small home or office networks. However, the protocol is not authenticated, and one computer could request a port mapping for another one. It carries some security risks which have been exploited in the past, including the infamous \textit{Flash UPnP Attack}. Another group of issues is caused by improper protocol implementation in routers, which has e.g. allowed to re-route all traffic from the internal network to an external server. \cite{upnpbugs}
+
+\textit{NAT Port Mapping Protocol (NAT-PMP)} is a similar protocol introduced by Apple which has been implemented by various Apple products and it was still primarily focused only on home gateways. NAT-PCP was superceeded by the \textit{Port Control Protocol (PCP)}, which was standardized in 2013. \cite{pcp} It allows for deployment in various scenarios, including carrier grade networks.
+
+Using port forwarding sounds like a promising approach that would allow applications to control open ports and learn public addresses reliably without using any third parties. However, in practice, these protocols are commonly disabled, possibly for security reasons. We could argue that modern port forwarding protocols such as PCP do not reduce security in any way, as the same effect can be achieved with other NAT traversal methods, though much more expensively.
+
+%To mitigate this issue, \textit{Port Control Protocol (PCP)} \cite{pcp} has been designed by IEFT to enable port forwarding in CGN deployments. However, our experiments have shown that most providers do not have this mechanism deployed at the moment. Moreove, some providers have deployed a version of CGN that does not satisfy NAT behavioral requirements \cite{behave}, which makes P2P communication in their networks nearly impossible.
 
 % mention protocols for port forwarding configuration: UPnP-IGD, NAT-PMP, PCP
 % usually not enabled by default, not enabled in carrier networks
 
 \subsection{Session Traversal Utilities for NAT (STUN)}
 
-\subsection{NAT Behavior Discovery Using STUN}
+STUN was originally defined in \cite{rfc3489} as \textit{Simple Traversal of User Datagram Protocol (UDP) Through Network Address Translators (NATs)}. It was a client–server protocol that allowed applications to discover the presence and types of NAT, and determine the public IP assigned to them by the NAT. However, it has been shown that the protocol does not work reliably enough to be a deployable solution. The NAT classification used by the STUN did not cover all possible types of NATs, and it did not provide any remedy in scenarios where the peers were not connectable.
+
+% TODO: write more about how it worked
+
+The protocol has been made obsolete by the introduction of \textit{Session Traversal Utilities for NAT} in \cite{rfc5389}. It no longer presents itself as a complete solution to NAT traversal, but rather as a tool that can be used by other protocols such as ICE to discover the public IP address. This process is also known as \textit{Unilateral Self-Address Fixing (UNSAF)}. It is a completely new protocol with the same name, which causes some confusion, and when dealing with different implementations, one has to make sure which version of STUN it actually implements.
+
+\iffalse
+The original STUN specification divides NAT behavior into four classes: Full Code, Restricted Cone, Port Restricted Cone, and Symmetric. We can define these classes by mapping their mapping and filtering behaviors discussed previously according to the Table \ref{nat_table}.
+
+\begin{table}
+    \centering
+    \begin{tabular}{ | c | c | c | }
+      \hline
+        & \textbf{EIM} & \textbf{APDM} \\
+      \hline
+      \textbf{EIF} & Full Cone & \\
+      \hline
+      \textbf{ADF} & Restricted Cone & \multirow{2}{*}{Symmetric} \\
+      \cline{1-2}
+      \textbf{APDF} & Port Restricted Cone & \\
+      \hline
+    \end{tabular}
+    \caption{NAT classification used by the STUN specification}
+    \label{nat_table}
+  \end{table}
+\fi
+
+% \subsection{NAT Behavior Discovery Using STUN}
 
 \subsection{Traversal Using Relays Around NAT (TURN)}
 
+While STUN can be used to discover the public addresses that peers can use to communicate, it does not guarantee these are addresses can actually be used for communication. Specifically, a symmetric NAT is known not to be compatible with STUN. \textit{Traversal Using Relays Around NAT (TURN)} provides a solution that is guaranteed to work with any NAT. It is based on a TURN server which is used to relay the traffic between two peers.
+
+The protocol allows a host behind a NAT \textit{(TURN client)} to request another host \textit{(TURN server)} to act as a relay. Upon request, the server allocates an address which can then be advertised by the client and used to communicate with multiple peers. When a peer sends a packet to the server address, it is relayed to the appropriate client. When a client sends a response to the server, it is sent to the peer on behalf of the server.
+
+While this approach allows to establish connection in almost all screnarios, it comes with a high cost on the TURN server operator, so it is meant to be used only as a last resort when no other type can be established. There is also no incentive for TURN server operators to provide this service.
+
 \subsection{Interactive Connectivity Establishment (ICE)}
+
+The \textit{Interactive Connectivity Establishment (ICE)} \cite{ice} provides the complete solution for NAT traversal which is built on top of STUN and TURN protocols. TODO
 
 % \subsection{ICMP Hole Punching}
 
@@ -201,20 +277,20 @@ There have been many attempts to enable direct communication between IEEE 802.11
 
 \textit{Wi-Fi Direct} (also known as Wi-Fi Peer-to-Peer) \cite{wifip2p} is a IEEE 802.11 based protocol released by Wi-FI Alliance in 2009 and supported from Android 4.0. With Wi-Fi direct, devices are organized in groups, where one device is the Group Owner (GO) and the rest are Group Members (GM). The roles are not predefined, but are negotiated during the group formation process. Groups are able to support Legacy Clients (LC), which means that even devices without Wi-Fi Direct support can join as group members.
 
-\subsubsection{Multi-group communication}
+%\subsubsection{Multi-group communication}
 
-The standard only defines intra-group communication, but it does not restrict a Group Member from participating in multiple groups simultaneously. Moreover, a device can theoretically connect both to Wi-Fi Direct and an infrastructure network by using multiple virtual MAC entities. However, these functionalities are not defined by the standard and thus depend on the implementation.
+%The standard only defines intra-group communication, but it does not restrict a Group Member from participating in multiple groups simultaneously. Moreover, a device can theoretically connect both to Wi-Fi Direct and an infrastructure network by using multiple virtual MAC entities. However, these functionalities are not defined by the standard and thus depend on the implementation.
 %\subsubsection{Limitations of Android}
-In Android, the GO always has the same hardcoded IP address (192.168.49.1), while GM are assigned a random address from the same subnet (192.168.49.2-254). As a result, the scenario where the device would act in multiple groups at the same time cannot be directly implemented.
+%In Android, the GO always has the same hardcoded IP address (192.168.49.1), while GM are assigned a random address from the same subnet (192.168.49.2-254). As a result, the scenario where the device would act in multiple groups at the same time cannot be directly implemented.
 
-There are several workarounds proposed in \cite{FunaiTH16}. The first solution is to use \textit{time sharing} to allow a device to act as a gateway between multiple groups. It requires a device to periodically disconnect and reconnect to different groups and effectively act as a relay passing messages between multiple groups.
-Another solution takes advantage of \textit{simultaneous connections} using Wi-Fi Direct and the traditional Wi-Fi. The GO advertises its group using a unique Service Set ID (SSID) that can be used by other clients not supporting the framework to join the group. Experiments have shown that it is possible to create a LC/GM gateway node when communicating using multicast UDP datagram sockets. Due to routing-related issues, this solution does not work with traditional datagram or stream sockets. The authors also propose a more efficient \textit{hybrid} protocol that uses multicast sockets as a control channel that triggers gateway configuration change if needed. However, all solutions rely on undocumented behaviors, which means their reliability can vary across devices or Android OS versions.
+%There are several workarounds proposed in \cite{FunaiTH16}. The first solution is to use \textit{time sharing} to allow a device to act as a gateway between multiple groups. It requires a device to periodically disconnect and reconnect to different groups and effectively act as a relay passing messages between multiple groups.
+%Another solution takes advantage of \textit{simultaneous connections} using Wi-Fi Direct and the traditional Wi-Fi. The GO advertises its group using a unique Service Set ID (SSID) that can be used by other clients not supporting the framework to join the group. Experiments have shown that it is possible to create a LC/GM gateway node when communicating using multicast UDP datagram sockets. Due to routing-related issues, this solution does not work with traditional datagram or stream sockets. The authors also propose a more efficient \textit{hybrid} protocol that uses multicast sockets as a control channel that triggers gateway configuration change if needed. However, all solutions rely on undocumented behaviors, which means their reliability can vary across devices or Android OS versions.
 
 \subsection{Wi-Fi Aware}
 
 \textit{Wi-Fi Aware}, also known as \textit{Neighbor Awareness Networking} (NAN) is a recent networking standard introduced by Wi-Fi Alliance. \cite{wifiaware} It works by forming clusters with nearby devices. The discovery process starts when one device (a \textit{publisher}) publishes a discoverable service. Other devices (\textit{subscribers}) who subscribe to the same service will receive a notification once a matching publisher is discovered. After the subscriber discovers a publisher, it can either send a short message or establish a network connection with the device. A device can be both a subscriber and a publisher simultaneously.
 
-\subsection{Support in Operating Systems}
+%\subsection{Support in Operating Systems}
 
 % Describe support on different versions of Android
 % iOS supports MultipeerConnectivity, no direct access to Wi-Fi Direct
@@ -261,6 +337,11 @@ Another solution takes advantage of \textit{simultaneous connections} using Wi-F
 
 \subsection{libp2p}
 
+libp2p\footnote{https://libp2p.io} is a modularized peer-to-peer networking stack and library developed by Protocol Labs, a non-profit company behind the Interplanetary File System (IPFS)\footnote{https://ipfs.io}, a distributed filesystem comibing some fundamental ideas from BitTorrent and Git. They extracted the networking logic from the IPFS project into a library after realizing it could be useful for other applications as well. This is to date probably the most widely known universal P2P library. It was originally implemented in Go and JavaScript, and there are ongoing efforts to provide implementations in Rust, Haskell, Kotlin, and Python. One of the promises of the Kotlin implementation will be the ability to run it natively both on JVM and Android runtime.
+
+The library is composed of several layers, where each can be implemented by one of interchangeable modules. It implements port mapping and hole punching inspired by STUN to deal with NATs. The \textit{identify} protocol allows nodes to discover their public address and the \textit{AutoNAT} service allows them to discover the NAT behavior by forcing other peers in the network to attempt to connect to them. When the NAT traversal fails, there is a circuit relay protocol that allows peers to communicate indirectly using intermediate peers, which similar to the functionality of TURN servers. Currently, the relay protocol requires a list of relays to connect to. An \textit{autorelay} protocol for discovering public relays is under active development.
+
+
 \subsection{Nearby Connections API}
 
 \subsection{MultipeerConnectivity}
@@ -273,7 +354,7 @@ Another solution takes advantage of \textit{simultaneous connections} using Wi-F
 
 \chapter{Design}
 
-\section{ Goals and Considerations}
+\section{Goals and Considerations}
 
 \subsection{Reliable vs. Unreliable Transport}
 
@@ -282,6 +363,14 @@ Another solution takes advantage of \textit{simultaneous connections} using Wi-F
 \subsection{Authentication and Encryption}
 
 \subsection{Peer Discovery}
+
+% Distributed hash tables
+% Local network broadcast
+% Exchanging peer lists with existing peers
+% Centralized trackers
+% List of bootstrap nodes
+
+
 
 %\subsection{NAT Traversal}
 
@@ -363,6 +452,11 @@ We would like to have a fully automated NAT traversal. For that, we need a mecha
 
 
 \section{Relay Protocol with Bandwidth Accounting}
+
+\section{Security Considerations}
+
+\subsection{Sybil Attack}
+\subsection{Eclipse Attack}
 
 \clearpage
 
@@ -493,6 +587,12 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 \subsection{Discovery Community}
 
+\subsubsection{Ping}
+
+% send random int, measure latency
+
+\subsubsection{Similarity Request}
+
 \section{Discovery Strategies}
 
 \subsection{Random Walk}
@@ -615,7 +715,7 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
         \hline
         \textbf{KPN} & \cellcolor{green!25}1& \cellcolor{yellow!25}? &  &  &  \\
         \hline
-        \textbf{Vodafone} & \cellcolor{yellow!25}1 & \cellcolor{green!25}1 & \cellcolor{yellow!25}? &  &  \\
+        \textbf{Vodafone} & \cellcolor{yellow!25}1 & \cellcolor{green!25}1 & \cellcolor{red!25}? &  &  \\
         \hline
         \textbf{Tele2} & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \\
         \hline
