@@ -3,7 +3,7 @@
 %The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. %The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet.
 %To deal with address exhaustion, internet providers were forced to deploy \textit{Network Address Translation (NAT)} which allows a single address to be shared across multiple devices, but also makes it difficult to communicate between devices without using additional trusted servers.
 
-The Internet was created with the idea that any two computers connected to the shared network should be able to communicate with each other. It has also been built on the principles of decentralization, without any central entity having power to take the network down. 50 years later, we live in the world where most of the services are centralized and user data are stored on the servers owned by a few large profit-oriented companies.
+The Internet was created with the idea that any two computers connected to the shared network should be able to communicate with each other. It has also been built on the principles of decentralization, without any central entity having power to take the network down. Yet, 50 years later, we live in the world where most of the services are centralized and user data are stored on the servers owned by a few large profit-oriented companies.
 
 In the recent years, the idea of decentralization has attracted many in the engineering and research community. Since the introduction of cryptocurrencies in the last decade, there have been many discussions on whether we can decentralize other services, such as social media, or web. With the trend of decentralization, applications are shifting from the client-server model to peer-to-peer, which brings many challenges and calls for a new networking stack.
 
@@ -21,7 +21,7 @@ This thesis proposes and implements a protocol for peer to peer communication be
 
 % To show one of many practical use cases of the protocol, a simple chat messaging application is implemented on top of it. It allows two users to exchange identities in a secure way to prevent MITM attack. Then they can transfer not only text messages, but also images and videos, to demonstrate a binary file transfer.
 
-The robustness of the NAT traversal mechanism has been tested by conducting a connectivity check between devices using the networks of major mobile network operators and home broadband providers in the Netherlands. The mechanism has been shown to establish connection in all tested network conditions.
+The robustness of the NAT traversal mechanism has been tested by conducting a connectivity check between devices using the networks of major mobile network operators and home broadband providers in the Netherlands. The mechanism has been shown to capable of establishing a connection in all tested network conditions.
 
 To demonstrate the usage of the library, a decentralized messaging application with end-to-end encryption, which allows trustworthy communication insusceptible to the man-in-the-middle attack, has been implemented. To get feedback on the APIs and general usability of the library, 4 teams of MSc students have been asked to develop non-trivial distributed applications on top of it.
 
@@ -123,6 +123,115 @@ We analyze the question in more detail:
 
 
 \chapter{State of the Art}
+
+In this chapter, we conduct a short survey of various topics related to P2P communication. We start by analyzing existing solutions and platforms for decentralized communication. We continue by introducing the problem of network address translation (NAT) and commonly used solutions for fixing the broken internet infrastructure by techniques known as NAT traversal. Finally, we introduce wireless communication technologies provided by modern smartphone devices and analyze them based on practical usability for infrastructureless communication.
+
+\section{P2P Communication Libraries}
+
+There are many projects dealing with the problem of peer to peer (P2P) communication on different levels, ranging from general-purpose libraries that can be used to build applications (libp2p, IPv8), to feature-packed platforms providing social networking features on top of their custom-designed protocols (Briar, Bridgefy, Berty, Secure Scuttlebutt). We try to analyze their functionality from the technical and usability perspective, state their advantages and shortcomings, and propose improvements when possible.
+
+\subsection{libp2p}
+
+libp2p\footnote{https://libp2p.io} is a modularized peer-to-peer networking stack and library developed by Protocol Labs, a non-profit company behind the Interplanetary File System (IPFS)\footnote{https://ipfs.io}, a distributed filesystem comibing some fundamental ideas from BitTorrent and Git. They extracted the networking logic from the IPFS project into a library after realizing it could be useful for other applications as well. This is to date probably the most widely known universal P2P library. It was originally implemented in Go and JavaScript, and there are ongoing efforts to provide implementations in Rust, Haskell, Kotlin, and Python. One of the promises of the Kotlin implementation will be the ability to run it natively both on JVM and Android runtime.
+
+The library is composed of several layers, where each can be implemented by one of interchangeable modules. It implements port mapping and hole punching inspired by STUN to deal with NATs. The \textit{identify} protocol allows nodes to discover their public address and the \textit{AutoNAT} service allows them to discover the NAT behavior by forcing other peers in the network to attempt to connect to them. When the NAT traversal fails, there is a circuit relay protocol that allows peers to communicate indirectly using intermediate peers, which similar to the functionality of TURN servers. Currently, the relay protocol requires a list of relays to connect to. An \textit{autorelay} protocol for discovering public relays is under active development.
+
+
+% \subsection{Nearby Connections API}
+
+% \subsection{MultipeerConnectivity}
+
+% \subsection{Bridgefy}
+
+\subsection{Briar}
+
+Briar \cite{briar_gplay} is an open-source project which aims to support freedom of expression and right to privacy. It enables peer-to-peer encrypted messaging and forums. It is presented as a tool for activists, journalists, and anyone who needs a safe way to communicate.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/briar/briar1}
+    \includegraphics[width=0.32\textwidth]{screens/briar/contact}
+    \includegraphics[width=0.32\textwidth]{screens/briar/briar2}
+    \caption{The menu, contact exchange, and the conversation detail in the Briar app}
+    \label{manyverse}
+\end{figure}
+
+Before the communication starts, users have to meet in person and scan QR codes from each other's screen. The devices exchange public keys and agree on a shared key using \textit{Bramble QR Code Protocol (BQP)} \cite{briar_bqp}.
+%The protocol requires both devices to have Bluetooth enabled and be discoverable, or be connected to the same WiFi network.
+This provides strong identities secure against man-in-the-middle attacks.
+The device only accepts connections from devices in contacts. However, the user can initiate an introduction between two of her contacts. If both contacts accept the introduction request, then they are able to establish connections without meeting in person.
+
+The communication is built on top \textit{Bramble Transport Protocol (BTP)} and \textit{Bramble Synchronization Protocol (BSP)}, transport and application layer protocols suitable for \textit{delay-tolerant networks}. \cite{briar_stack} It does not rely on any central server, but instead allows to synchronize messages using Bluetooth or Wi-Fi. If the Internet is available, it can also connect via the Tor network.
+
+\subsection{Berty Protocol}
+
+\subsection{Secure Scuttlebutt}
+
+Scure Scuttlebutt (SSB) \cite{ssb} is a peer-to-peer gossip protocol for building decentralized applications. Its first application was a distributed social networking platform Scuttlebutt. Each peer in the network has its own identity generated from its public key. Every identity is tied to its own feed, which is represented by an append-only log of messages. Each message is signed with the peer's private key to provide authenticity. Every message also has a pointer to the hash of the previous item in the log, which helps to ensure data integrity during replication.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/ssb/feed}
+    \includegraphics[width=0.32\textwidth]{screens/ssb/thread}
+    \includegraphics[width=0.32\textwidth]{screens/ssb/connections}
+    \caption{The feed, thread, and connections list UI in the Manyverse Android app}
+    \label{manyverse}
+\end{figure}
+
+The system architecture is designed to be completely decentralized and work off-grid without any infrastructure. Each peer stores its entire feed history and feeds received from other peers. When peers get connected, they exchange their feeds and feeds of people they follow. The protocol provides eventual consistency.
+
+
+
+\subsubsection{Peer Discovery}
+
+The protocol can perform peer discovery either by UDP broadcasting over the local area network, or more commonly, by using \textit{pubs}. A pub is a peer which is publicly accessible on the Internet. The user who wants to join the network first needs to obtain an \textit{invite link} containing the IP addres, port, and a public key of a pub. The peer establishes a connection with the pub over TCP using the Secret Handshake key exchange \cite{secrethandshake}. Subsequently, they can communicate using an RPC protocol. The peer can then access feeds of other peers followed by the same pub.
+
+\subsubsection{Blobs}
+
+Messages can contain links to binary large objects, or \textit{blobs}. Peers send to each other lists of blobs they \textit{have} and \textit{want}, in a similar fashion as in the BitTorrent protocol. Peers can also download blobs on behalf of each other if any of their peers have the blob requested by another peer, to increase data availability. The blobs are addressed by hashes, so anyone who fetches them can verify they have not been tampered with.
+
+\subsubsection{Private Messages}
+
+Sometines the user wants to send a private message that can be read only by one or more specific people. In that case, the message needs to be encrypted in a way that it can be decrypted only with people owning the corresponding private keys. For each private message, the sender generates a random secret key to encrypt its content. The sender then encrypts the secret key with a public key of each recipient of the message and includes these encrypted keys in the message header. The identity of recipients is not revealed. Instead, every peer who receives the message has to try to decrypt the key to find out if they are one of the intended recipients.
+
+\subsubsection{Conclusion}
+
+The reference protocol implementation is written in Node.js, with ongoing efforts for Go, Python, and Rust implementations. There is an official multiplatform UI client Patchwork\footnote{https://scuttlebutt.nz/} implemented in the Electron framework. There is also a mobile client called Manyverse\footnote{https://www.manyver.se/} written in React Native, available both for Android and iOS.
+
+While the protocol claims to be peer-to-peer, it is based on client-server communication model, as most of the communication happens via publicly available peers called pubs. There is no NAT traversal layer, so peers behind NATs are not able to communicate with each other directly. We are also questioning the scalability and incentive alignments of the protocol, as users are by default supposed to store complete feeds and blobs even for friends-of-friends. Also, all private messages are stored in the public feed and replicated across many peers, even when the message can only be decrypted by a single peer, which creates unnecessary overhead.
+
+\subsection{IPv8}
+
+IPv8 is a networking library developed over the last 13 years at TU Delft. It is an evluation of an older library called \textit{Dispersy} \cite{dispersy}, and its primary purpose is to serve as the networking layer of Tribler, an anonymous P2P file-sharing client. However, it attempts to be a general-purpose library which can be used to build custom P2P applications. It is composed of several layers:
+
+\subsubsection{Identity}
+The identity layer provides each peer with a private and public key pair. This allows authenticated communication. The public keys can also be used for addressing and IP addresses are ultimately abstracted away.
+
+\subsubsection{NAT Traversal}
+UDP hole punching is implemented as a basic NAT traversal technique to allow connectivity between peers behind NATs.
+
+\subsubsection{Peer Discovery}
+Discovery protocol based on a \textit{distributed hash table (DHT)} allows to connect to specific peers using their public key, without need for knowing their IP address. While there is a list of trusted bootstrap servers provided, in theory any peer in the network can be used to bootstrap connection, thanks to distributed nature of UDP hole punching protocol which does not rely on STUN servers.
+
+\subsubsection{TrustChain}
+The library also provides TrustChain \cite{trustchain}, a scalable distributed ledger for tamper-proof accounting. It is currently mainly used as a bandwidth accounting mechanism to prevent freeriding in Tribler, but has wide range of other potential use cases, including a decentralized asset exchange \cite{anydex}, or identity attestations and verifiable claims.
+
+%\subsubsection{Known Issues}
+%There are several known issues with the current implementation of the library, which we now briefly discuss.
+%\begin{itemize}
+%Firstly, the communication is based on UDP and no higher-level transport protocols are supported. This means it is a responsibility of a developer that all messages fit into a UDP packet.
+
+%Currently, only IPv4 addresses are supported, while adding IPv6 support is planned for future updates. However, there still problem with testing infrastructure, as IPv6 has been coming to TU Delft since 2012 and still is not fully deployed.
+
+%The library works for establishing connections between computers on the public Internet, but starts to behave unpredicatbly when some of the peers are on the same LAN. Firstly, it uses public addresses for communication and thus relies on the NAT to support hairpinning, which is not always the case. When LAN connection is established using a LAN address, the connectivity can break because the peer starts to confuse its LAN address with a public address due to insufficient robustness of the UNSAF mechanism.
+
+%UDP hole punching is only effective for NATs implementing endpoint independent mapping. Peers behind NATs with more complex behavior are usually not connectable. However, this is remedied by the tunneling which allows to use other peers as proxies.
+
+\subsubsection{Mobile Support}
+It is written in Python, as well as the rest of the Tribler stack. While using a single language during the whole development process is convenient for the Tribler team, the language choice has been a limiting factor when porting to mobile platforms such as Android. There have been attempts to run IPv8 on Android using \textit{python-for-android}\footnote{https://github.com/kivy/python-for-android} toolkit which allows to build a Python interpreter together with the application source code into an APK. However, the whole build process has shown to be fragile and impractical. Firstly, the build of the whole library takes almost an hour, which severely degrades developer experience and slows down iterative development. Secondly, it has turned out to be problematic to compile a 64-bit APK that would comply with the requirements for publishing on Google Play.
+%\end{itemize}
+
+In this thesis, we will attempt to port the existing IPv8 protocol into Kotlin\footnote{https://kotlinlang.org}, a modern statically-typed language that can be compiled to JVM or native code. This will allow us to run the stack both on desktop and mobile devices without any significant overhead. We will also analyze some weak points of the existing implementation and extend the protocol where needed to be more usable on mobile devices.
 
 \section{Network Address Translation}
 
@@ -332,37 +441,19 @@ There have been many attempts to enable direct communication between IEEE 802.11
 % - API on Android very low level, error-prone to use
 % - role simultaneity – master and slave at the same time
 
+%\section{Goals and Considerations}
 
-\section{P2P Communication Libraries}
+\chapter{Protocol Design}
 
-\subsection{libp2p}
+\section{Identity and Keys}
 
-libp2p\footnote{https://libp2p.io} is a modularized peer-to-peer networking stack and library developed by Protocol Labs, a non-profit company behind the Interplanetary File System (IPFS)\footnote{https://ipfs.io}, a distributed filesystem comibing some fundamental ideas from BitTorrent and Git. They extracted the networking logic from the IPFS project into a library after realizing it could be useful for other applications as well. This is to date probably the most widely known universal P2P library. It was originally implemented in Go and JavaScript, and there are ongoing efforts to provide implementations in Rust, Haskell, Kotlin, and Python. One of the promises of the Kotlin implementation will be the ability to run it natively both on JVM and Android runtime.
+\section{Peer Discovery}
 
-The library is composed of several layers, where each can be implemented by one of interchangeable modules. It implements port mapping and hole punching inspired by STUN to deal with NATs. The \textit{identify} protocol allows nodes to discover their public address and the \textit{AutoNAT} service allows them to discover the NAT behavior by forcing other peers in the network to attempt to connect to them. When the NAT traversal fails, there is a circuit relay protocol that allows peers to communicate indirectly using intermediate peers, which similar to the functionality of TURN servers. Currently, the relay protocol requires a list of relays to connect to. An \textit{autorelay} protocol for discovering public relays is under active development.
+\subsection{Bootstrap Server}
 
+\subsection{Multicast DNS}
 
-\subsection{Nearby Connections API}
-
-\subsection{MultipeerConnectivity}
-
-\subsection{Bridgefy SDK}
-
-\subsection{Berty Protocol}
-
-\subsection{IPv8}
-
-\chapter{Design}
-
-\section{Goals and Considerations}
-
-\subsection{Reliable vs. Unreliable Transport}
-
-\subsection{UDP Socket Multiplexing}
-
-\subsection{Authentication and Encryption}
-
-\subsection{Peer Discovery}
+\subsection{Bluetooth Advertising}
 
 % Distributed hash tables
 % Local network broadcast
@@ -370,6 +461,16 @@ The library is composed of several layers, where each can be implemented by one 
 % Centralized trackers
 % List of bootstrap nodes
 
+
+\section{Transport Layer}
+
+\subsection{Reliable vs. Unreliable Transport}
+
+\subsection{UDP Socket Multiplexing}
+
+\subsection{Authentication and Encryption}
+
+\subsection{Binary File Transfer over UDP}
 
 
 %\subsection{NAT Traversal}
@@ -451,12 +552,14 @@ We would like to have a fully automated NAT traversal. For that, we need a mecha
 \end{figure}
 
 
-\section{Relay Protocol with Bandwidth Accounting}
+%\section{Relay Protocol with Bandwidth Accounting}
 
 \section{Security Considerations}
 
 \subsection{Sybil Attack}
 \subsection{Eclipse Attack}
+\subsection{Distributed Denial of Service}
+\subsection{WAN Address Forgery}
 
 \clearpage
 
@@ -497,8 +600,8 @@ On the lowest layer in the host, L2CAP is responsible for multiplexing and split
 
 % \subsubsection{Security Manager (SM)}
 
-\subsubsection{Generic Access Profile (GAP)}
-// TODO
+%\subsubsection{Generic Access Profile (GAP)}
+% // TODO
 
 \subsubsection{Attribute Protocol (ATT)}
 ATT is a client-server protocol for reading and writing attributes. It is strict about sequential operation. If a request is pending, no further requests should be sent until the response is received, otherwise they are discarded. Attributes are stored under attribute handles defined by UUIDs. Various operations are defined by the protocol. Apart from the standard configuraiton, read and write, queued write is supporte to write data longer than a single packet. If a client wants to be notified about handle changes, it can subscribe to handle value notifications or indications. Both allow the server to notify the clients whenever a value changes, but in case of indication, the client should respond with ack packet to confirm it has received the indication.
@@ -615,9 +718,18 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 \section{Bootstrap Server}
 
-\section{PeerChat: Distributed Messenger}
+\section{TrustChain: Scalable Distributed Ledger}
 
-\section{TrustChain: Scalable Accounting Mechanism}
+% \subsection{TrustChain Explorer}
+
+\section{PeerSocial: Decentralized Social Network}
+
+\subsection{Trustworthy Friendship Establishment}
+
+\subsection{PeerChat: Private Messaging Protocol}
+
+\subsection{Public Post Feed}
+
 
 %\section{Bluetooth Communication}
 
@@ -627,7 +739,7 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 %\section{Packet Format}
 
-\subsection{TrustChain Explorer}
+
 
 %\section{Binary Transfer over UDP}
 
