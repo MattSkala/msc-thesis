@@ -7,9 +7,6 @@ The Internet was created with the idea that any two computers connected to the s
 
 In the recent years, the idea of decentralization has attracted many in the engineering and research community. Since the introduction of cryptocurrencies in the last decade, there have been many discussions on whether we can decentralize other services, such as social media, or web. With the trend of decentralization, applications are shifting from the client-server model to peer-to-peer, which brings many challenges and calls for a new networking stack.
 
-%Another issue appeared with the rise of portable computers and smartphones. IPv4 addresses are dependent on the physical location and can not be considered stable user identifiers. There have been several proposals
-%to improve the usability and security of the Internet Protocol. However, none of them have been widely deployed or address all known issues.
-
 %including Mobile IP, IPSec, and IPv6
 % TODO: client-server model, but recently trend is decentralization
 
@@ -126,11 +123,16 @@ We analyze the question in more detail:
 
 In this chapter, we conduct a short survey of various topics related to P2P communication. We start by analyzing existing solutions and platforms for decentralized communication. We continue by introducing the problem of network address translation (NAT) and commonly used solutions for fixing the broken internet infrastructure by techniques known as NAT traversal. Finally, we introduce wireless communication technologies provided by modern smartphone devices and analyze them based on practical usability for infrastructureless communication.
 
-\section{P2P Communication Libraries}
+\section{Decentralized Communication Platforms}
 
 There are many projects dealing with the problem of peer to peer (P2P) communication on different levels, ranging from general-purpose libraries that can be used to build applications (libp2p, IPv8), to feature-packed platforms providing social networking features on top of their custom-designed protocols (Briar, Bridgefy, Berty, Secure Scuttlebutt). We try to analyze their functionality from the technical and usability perspective, state their advantages and shortcomings, and propose improvements when possible.
 
+\subsection{Fediverse}
+TODO: federated servers used for web publishing (Mastodon, PeerTube, Friendica)
+
 \subsection{libp2p}
+
+% TODO: libp2p stack
 
 libp2p\footnote{https://libp2p.io} is a modularized peer-to-peer networking stack and library developed by Protocol Labs, a non-profit company behind the Interplanetary File System (IPFS)\footnote{https://ipfs.io}, a distributed filesystem comibing some fundamental ideas from BitTorrent and Git. They extracted the networking logic from the IPFS project into a library after realizing it could be useful for other applications as well. This is to date probably the most widely known universal P2P library. It was originally implemented in Go and JavaScript, and there are ongoing efforts to provide implementations in Rust, Haskell, Kotlin, and Python. One of the promises of the Kotlin implementation will be the ability to run it natively both on JVM and Android runtime.
 
@@ -144,6 +146,8 @@ The library is composed of several layers, where each can be implemented by one 
 % \subsection{Bridgefy}
 
 \subsection{Briar}
+
+% TODO: Better description
 
 Briar \cite{briar_gplay} is an open-source project which aims to support freedom of expression and right to privacy. It enables peer-to-peer encrypted messaging and forums. It is presented as a tool for activists, journalists, and anyone who needs a safe way to communicate.
 
@@ -163,7 +167,7 @@ The device only accepts connections from devices in contacts. However, the user 
 
 The communication is built on top \textit{Bramble Transport Protocol (BTP)} and \textit{Bramble Synchronization Protocol (BSP)}, transport and application layer protocols suitable for \textit{delay-tolerant networks}. \cite{briar_stack} It does not rely on any central server, but instead allows to synchronize messages using Bluetooth or Wi-Fi. If the Internet is available, it can also connect via the Tor network.
 
-\subsection{Berty Protocol}
+% \subsection{Berty Protocol}
 
 \subsection{Secure Scuttlebutt}
 
@@ -179,8 +183,6 @@ Scure Scuttlebutt (SSB) \cite{ssb} is a peer-to-peer gossip protocol for buildin
 \end{figure}
 
 The system architecture is designed to be completely decentralized and work off-grid without any infrastructure. Each peer stores its entire feed history and feeds received from other peers. When peers get connected, they exchange their feeds and feeds of people they follow. The protocol provides eventual consistency.
-
-
 
 \subsubsection{Peer Discovery}
 
@@ -202,7 +204,7 @@ While the protocol claims to be peer-to-peer, it is based on client-server commu
 
 \subsection{IPv8}
 
-IPv8 is a networking library developed over the last 13 years at TU Delft. It is an evluation of an older library called \textit{Dispersy} \cite{dispersy}, and its primary purpose is to serve as the networking layer of Tribler, an anonymous P2P file-sharing client. However, it attempts to be a general-purpose library which can be used to build custom P2P applications. It is composed of several layers:
+IPv8 \cite{ipv8} is a P2P networking library developed over the last 13 years at TU Delft. It is an evolution of previous generations of \textit{BuddyCast} \cite{buddycast} and \textit{Dispersy} \cite{dispersy}. Its primary purpose is to serve as the networking layer of Tribler, an anonymous P2P file-sharing client. However, it attempts to be a general-purpose library which can be used to build custom P2P overlays and applications. It is conceptually composed of several layers:
 
 \subsubsection{Identity}
 The identity layer provides each peer with a private and public key pair. This allows authenticated communication. The public keys can also be used for addressing and IP addresses are ultimately abstracted away.
@@ -231,8 +233,6 @@ The library also provides TrustChain \cite{trustchain}, a scalable distributed l
 It is written in Python, as well as the rest of the Tribler stack. While using a single language during the whole development process is convenient for the Tribler team, the language choice has been a limiting factor when porting to mobile platforms such as Android. There have been attempts to run IPv8 on Android using \textit{python-for-android}\footnote{https://github.com/kivy/python-for-android} toolkit which allows to build a Python interpreter together with the application source code into an APK. However, the whole build process has shown to be fragile and impractical. Firstly, the build of the whole library takes almost an hour, which severely degrades developer experience and slows down iterative development. Secondly, it has turned out to be problematic to compile a 64-bit APK that would comply with the requirements for publishing on Google Play.
 %\end{itemize}
 
-In this thesis, we will attempt to port the existing IPv8 protocol into Kotlin\footnote{https://kotlinlang.org}, a modern statically-typed language that can be compiled to JVM or native code. This will allow us to run the stack both on desktop and mobile devices without any significant overhead. We will also analyze some weak points of the existing implementation and extend the protocol where needed to be more usable on mobile devices.
-
 \section{Network Address Translation}
 
 \textit{Network Address Translation} (NAT) is a method of mapping addresses from one address space into another by modifying the IP header of a packet on its way from the source to the destination. It has been originally proposed as a temporary solution to slow down IPv4 address space exhaustion, until a better solution is implemented. \cite{nat} Yet, it has become so ubiquitous in the Internet infrastructure that almost all end users are located behind a NAT nowadays.
@@ -241,6 +241,8 @@ NAT is designed to be fully transparent when using the client–server communica
 
 \subsection{NAT Classification}
 \label{nat-classification}
+
+% TODO: image of NAT classifiction
 
 The original proposal did not specify the exact behavioral requirements of a NAT, so hardware manufacturers had to decide a lot of implementation details on their own. This has resulted in fragmentation and many different NAT behaviors with different levels of restrictions. However, in general, most NATs can be classified according to their \textit{address and port mapping} and \textit{filtering} behavior \cite{behave}.
 
@@ -445,15 +447,43 @@ There have been many attempts to enable direct communication between IEEE 802.11
 
 \chapter{Protocol Design}
 
+In this chapter, we design a protocol facilitating peer to peer communication between any devices. We start by describing common problems in P2P networks such as identity, peer discovery, data transport, and NAT traversal. For each of the problems, we discuss the solution used by our protocol. In the end, we introduce the architecture of the whole system and describe the interaction between all individual building blocks.
+
+%In this thesis, we will attempt to port the existing IPv8 protocol into Kotlin\footnote{https://kotlinlang.org}, a modern statically-typed language that can be compiled to JVM or native code. This will allow us to run the stack both on desktop and mobile devices without any significant overhead. We will also analyze some weak points of the existing implementation and extend the protocol where needed to be more usable by mobile clients.
+
+It is important to note that in this thesis, we extend an existing IPv8 protocol~\cite{ipv8}. It is desirable that our protocol is backwards compatible with the original py-ipv8 implementation, so that we can connect and communicate with the existing peers in the network and use the services implemented by the existing infrastructure. For that reason, a lot of design decisions that have been previously made had to be accepted as such, even in cases where a different approach would probably be taken in case we designed the protocol from scratch.
+
 \section{Identity and Keys}
+
+In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet.
+To deal with address exhaustion, internet providers were forced to deploy \textit{Network Address Translation (NAT)} which allows a single address to be shared across multiple devices. With the rise of portable computers and smartphones, using IPv4 addresses on the application level is problematic as they are dependent on the physical location and should not be considered stable user identifiers. \textit{Mobile IP} \cite{mobileip} is one of the proposals that allows devices to move between networks while maintaining their IP addresses, but its wide adoption is unlikely due to the architectural complexity.
+
+Our goal is therefore to define custom peer identities on the protocol level and abstract IP addresses away from the applications. We also want to be able to sign messages to provide authenticity, and optionally encrypt them so they are readable only by the intended recipients. Both issues can be solved by public key cryptography. We will use elliptic-curve cryptography based on the on \textit{Curve25519}, which has been a de facto industry standard for past few years due to its security properties and absence of restricting patents.
+
+Prior to joining the network, each peer needs to generate a \textit{private key} represented by 32 bytes. It can be used for signing messages to prove their authenticity, or for decrypting encrypted messages. The private key can be in turn used to derive a \textit{public key} by multiplying the generator point of the curve by the private key. This operation is known to be irreversible, so it is computationally infeasible to obtain the private key from the public key. The public key can be shared with other peers and is used to verify that the message has been indeed created by the one who claims to be its sender. Furthermore, it can also be used for encrypting messages that will only be readable by the recipient. Finally, we calculate the hash of the public key to derive the \textit{peer ID}. The peer ID can be used to visualize the identity in the application UI as it is shorter than the public key, but the protocol usually operates with public keys directly. This simple process is shown in Figure \ref{keys}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{diagrams/keys}
+    \caption{Public key generation process}
+    \label{keys}
+\end{figure}
 
 \section{Peer Discovery}
 
+Peer discovery is the process of finding other peers in the network we should connect to. It is an essential mechanism in P2P systems as it allows new nodes to join the network.
+
 \subsection{Bootstrap Server}
+
+Probably the most common approach is using one or more bootstrapping servers that acts as trackers. The bootstrap server maintains a list of peers in the network and maintains the list of online peers with regular keep-alive checks. This is the only central component in our system. Ideally, it should be used only for finiding the first few nodes, and after that, the peer discovery would continue using these nodes, without contacting the boostrap server again.
 
 \subsection{Multicast DNS}
 
+When multiple peers are connected to the same local area network and they want to communicate with each other, there should be no need to contact an external server. We could utilize UDP multicast packets to notify other peers in the network who are in the same multicast group. This is the basic principle of the \textit{Local Peer Discovery} protocol used by BitTorrent. Another option would be to use \textit{multicast DNS} (mDNS) mechanism in conjunction with \textit{DNS Service Discovery} (DNS-SD), which is a zero-configuration protocol using packet formats of a DNS system. It allows us to discover local peers providing the given service and connect to them.
+
 \subsection{Bluetooth Advertising}
+
+When peers are in proximity but not connected to the same network, they can still discover each other with some nearby connectivity technologies, such as Wi-Fi Direct, Wi-Fi Aware, or Bluetooth. We have selected Bluetooth Low Energy as it is the most energy efficient and most widely supported technology in today's smartphones. A peer that has Bluetooth turned on is actively broadcasting their identity over advertising packets that can be discovered by other devices. The complete mechanism for nearby communication will be described more in detail in later sections. % TODO: ref
 
 % Distributed hash tables
 % Local network broadcast
@@ -464,9 +494,19 @@ There have been many attempts to enable direct communication between IEEE 802.11
 
 \section{Transport Layer}
 
+The transport layer is responsible for transferring data between peers. There are two transport layer protocols implemented in the IP suite: \textit{Transmission Control Protocol (TCP)}, and \textit{User Datagram Protocol (UDP)}.
+
 \subsection{Reliable vs. Unreliable Transport}
 
+TCP provides \textit{connection-oriented}, \textit{reliable} streams. That means that the connection needs to be established before any communication happens. This is done by means of a two-way handshake. Once the connection is established, messages can be exchanged. The messages until they are acknowledged, so the communication is reliable. The sliding window is used for congestion control, so multiple messages can be on the fly at the same time, ensuring efficient usage of the available bandwidth.
+
+On the other hand, UDP is a simple \textit{connectionless} protocol without any delivery guarantees. UDP packets called \textit{datagrams} and its behavior can be described as \textit{fire-and-forget}, as the sender generally does not have any information about packet delivery. It is primarly intended for use in real-time applications where packet loss is acceptable. UDP can also be used for building higher-level transport protocols such as \textit{uTP} or \textit{QUIC}.
+
+Many commonly used protocols such as HTTP take advantage of the reliable transport provided by TCP. However, in P2P setting, UDP is usually favored thanks to its simplicity and absence of a handshake, which makes NAT traveral easier. ICE has been originally defined only for UDP. Though extensions for TCP have been proposed, they rely on a specific NAT behavior to work and have significantly lower success rate than over UDP. For these reasons, we will also choose to use UDP.
+
 \subsection{UDP Socket Multiplexing}
+
+
 
 \subsection{Authentication and Encryption}
 
@@ -478,6 +518,7 @@ There have been many attempts to enable direct communication between IEEE 802.11
 %\section{NAT Detection}
 
 \section{NAT Traversal with Peer Introductions}
+\label{peer-introductions}
 
 One of the traditional NAT traversal methods called \textit{UDP hole punching} allows to establish UDP connectivity between two peers when both of them are hidden behind a NAT. It is based on the concept that both peers fire a UDP packet targeted at each other at the same time. This first packet creates a mapping entry in the sender's NAT and allows subsequent incoming packets to be delivered. This process can also be seen as opening a \textit{hole} in the firewall, which explains the term \textit{hole punching}.
 
@@ -667,13 +708,37 @@ The connection manager contains all GATT-related communication logic. Each devic
 % https://blog.classycode.com/a-short-story-about-android-ble-connection-timeouts-and-gatt-internal-errors-fa89e3f6a456
 % https://punchthrough.com/android-ble-development-tips
 
-\chapter{Implementation}
+\chapter{Protocol Implementation}
+
+In this section, we describe the system architecture and implementation of the P2P communication library. One of our main goals is to create an implementation that would be compatible with the majority of mobile devices. The most commonly used operating systems are Android and iOS, where Android uses the Android Runtime, with primary programming language being Java or Kotlin. iOS runs ARM native code compiled from Objective-C or Swift. Both platforms support running native code and allow the use of bridges to access system APIs. We are primarily interested in supporting Android, but extension for iOS support should be possible in the future.
+
+Regarding the programming language choice, many options have been considered. In general, there are three approaches to mobile development. The first one is to write the core logic in a language that compiles to native code and compile it as library for all possible CPU architectures. \textit{Rust}\footnote{https://www.rust-lang.org/} was considered as a low-level language that compiles to native code. It provides good performance and its compiler is proven to prevent any race conditions in a multi-threaded code. However, it could only be used to develop the core library, and the UI would still need to be written in languages supported by the specific platform SDK.
+
+Another approach is using a multi-platform framework that allows to reuse most of the code including the UI. Probably the most prevalent multi-platform framework today is \textit{React Native}\footnote{https://reactnative.dev/} developed by Facebook. However, it comes with the overhead of running in the JavaScript engine and despite its name, does not really provide a native performance.
+%Another alternative is Flutter developed by Google, which uses a custom language \textit{Dart}\footnote{https://flutter.dev/} and a completely custom rendering engine. However, while stable, it is still considered an experimental technology.
+
+The last and the most common approach is to use the languages officialy supported by the platform SDK. \textit{Kotlin}\footnote{https://kotlinlang.org/} is a modern statically typed language that can be compiled into JVM, native code, or JavaScript. It has been officially supported as the official programming language for Android since 2017 \cite{androidkotlin} and has replaced Java as the primary language in 2019. Thanks to its ability to compile to native code using the Kotlin/Native compiler, it can also be compiled for other platforms such as iOS. In the end, We have chosen Kotlin as the language for implementing both the P2P library and eventually the application itself.
 
 % Android vs. iOS, interoperability
 % Kotlin, Multiplatform - JVM + Android, but can be compiled to Native for iOS as well
 % Android Things – IoT
 
 \section{Project Structure}
+
+The project consists of two sub-projects that are maintained in two separate repositories: the P2P library called \textit{kotlin-ipv8}\footnote{https://github.com/Tribler/kotlin-ipv8}, and the application built on top of this library. The kotlin-ipv8 library currently supports Android and JVM targets, and the project is composed of the following modules:
+
+\begin{itemize}
+    \item \texttt{ipv8} \textit{(JVM library)}: The core of the IPv8 implementation, a pure Kotlin library module.
+    \item \texttt{ipv8-android} \textit{(Android library)}: Android-specific dependencies and helper classes for running IPv8 in Android Runtime.
+    \item \texttt{demo-android} \textit{(Android app)}: An Android application demonstrating the initialization of the \texttt{ipv8-android} library.
+    \item \texttt{ipv8-jvm} \textit{(JVM library)}: JVM-specific dependencies for running IPv8 on JVM.
+    \item \texttt{demo-jvm} \textit{(JVM app)}: The CLI app demonstrating the usage of the \texttt{ipv8-jvm} library.
+    \item \texttt{tracker} \textit{(JVM app)}: The bootstrap server implementation.
+\end{itemize}
+
+The ipv8 module contains the core logic that is shared across JVM and Android platforms. To ensure the stability of the project and make contributions by other developers easier, a development and \textit{continuous integration (CI)} infrastructure has been set up. The tests are written using the test framework \textit{JUnit}\footnote{https://junit.org/} and mocking framework \textit{mockk}\footnote{https://mockk.io/}. The code coverage is calculated and reported using \textit{Java Code Coverage Library (JaCoCo)}. The \textit{ktlint}\footnote{https://ktlint.github.io} linter is used to ensure the consistent code style, and Android Lint to check for common errors related to the usage of Android SDK. All tools are run automatically for every commit and merge request by a \textit{GitHub Actions} workflow. \textit{codecov.io}\footnote{https://codecov.io} is used to report the changes in code coverage for every pull request. The ipv8 module has extensive code coverage of 72\%.
+
+%The Gradle build system is used to specify the build and runtime dependencies.
 
 % JVM vs. Android
 % unit tests, TODO: Android tests
@@ -684,49 +749,114 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 \section{System Architecture}
 
-\section{Communities}
+The architecture of kotlin-ipv8 is heavily inspired by the architecture of the original py-ipv8 library, with some extensions. %Therefore, this section also serves as the documentation of the existing protocol, which is mostly missing at the moment, and had to be reconstructed by reading the existing codebase.
+The basic architectural building blocks are visualized in Figure \ref{ipv8_architecture}.
 
-\subsection{Community}
+A \textit{community} is a service implemented by the developer, or provided by the core of the library. Every service using the library should be extending the base \texttt{Community} class which provides convenient methods for serializing and deserializing messages, and reading the list of peers who are present in the community from the \textit{peer store}. It also implements messaging required for peer introduction and NAT puncturing mechanism previously described in Section \ref{peer-introductions}.
+
+Every community can have assigned one or more \textit{dicovery strategies}. A discovery strategy is primarily responsible for actively discovering and connecting to new peers in the network who are present in the same community. The discovery strategy should implement a method \texttt{takeStep} that is called reguarly in a preconfigured step interval and performs the required task.
+
+Finally, the endpoint is used to perform the communication. The library supports multiple transports implemented by separate endpoints. To abstract this away from the application developer, the community only communicates with the \textit{endpoint aggregator}. It groups all endpoints and decides to which endpoint the message should be sent. The messages received by the endpoint are then forwarded to the correct community based on the message header.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{diagrams/ipv8-architecture}
+    \caption{The system architecture of the IPv8 service}
+    \label{ipv8_architecture}
+\end{figure}
+
+%\section{Communities}
+
+% \subsection{Community}
 
 \subsection{Discovery Community}
 
-\subsubsection{Ping}
+\texttt{DiscoveryCommunity} is one of the core communities implemented by the IPv8 core. It tries to keep an active connection with a specified number of peers and keeps track of communities they participate in by sending \textit{similarity requests}. A similarity requests contains a list of communities the sender supports, and expects to receive a \textit{similarity response} back, which will include the list of communities supported by the other side. Furthermore, it implements \textit{ping} and \textit{pong} messages that allow to perform keep-alive checks, measure latency between peers, and handle peer churn by removing churned peers from the peer store. While it is possible to run IPv8 without using this community, it is not recommended. The discovery community is expected to be used with \texttt{PeriodicSimilarity} and \texttt{RandomChurn} strategies.
+
+\subsubsection{Periodic Similarity}
+
+The \texttt{PeriodicSimilarity} strategy simply sends a similarity request on every step to a random peer in the peer store, and thus ensuring the list of communities for every peer is kept up to date.
+
+\subsubsection{Random Churn}
+
+The \texttt{RandomChurn} strategy starts by selecting a list of random peers on every step. Each peer in the list is classified either as \textit{active}, \textit{inactive}, or \textit{churned}. The peer is considered churned if we haven't received a response to a ping in the last 57.5 seconds. In that case, we drop the peer from the peer store. The peer is considered inactive if we haven't received a response in the last 27.5 seconds. In that case, we send a ping to check for liveliness. If the peer is still active, we only send a ping if we haven't send it yet, to calculate the latency. The magic constants for detecting inactive and churned peers have been adopted from the original py-ipv8 implementation, as they have been extensively tested in the wild and are expected to reflect the behavior of the majority of NAT boxes. \cite{nat_wild}
+
+% \subsubsection{Ping}
 
 % send random int, measure latency
 
-\subsubsection{Similarity Request}
+% \subsubsection{Similarity Request}
 
-\section{Discovery Strategies}
+% \section{Discovery Strategies}
 
-\subsection{Random Walk}
+% \subsection{Random Walk}
 
-\subsection{Random Churn}
+% \subsection{Random Churn}
 
-\subsection{Periodic Similarity}
+% \subsection{Periodic Similarity}
 
-\subsection{Bluetooth Discovery Strategy}
+% \subsection{Bluetooth Discovery Strategy}
 
-\section{Endpoints}
+% \section{Endpoints}
 
-\subsection{Endpoint Aggregator}
+% \subsection{Endpoint Aggregator}
 
-\subsection{UDP Endpoint}
+% \subsection{UDP Endpoint}
 
-\subsection{TFTP Endpoint}
+% \subsection{TFTP Endpoint}
 
-\subsection{Bluetooth Endpoint}
+% \subsection{Bluetooth Endpoint}
 
 \section{Bootstrap Server}
 
+The bootstrap server is used by new peers who are interested in joining the network. It is implemented by extending the base community class with a customized behavior. The server accepts and responds to introduction requests regardless on the community id sent in the header, which enures that the bootstrap server can be used for discovering peers in any community. Upon the introduction request, it adds a peer to its peer store, and responds with an introduction response that contains the link IP address of the peer as it was received on the socket, and a random peer from the community from which the request was send. Peer churn is handled by a \texttt{SimpleChurn} strategy that simply removes any peers that have not sent any message in the last 120~seconds.
+
+\chapter{Decentralized Super App}
+
+The application follows the concept of a super app, and bundles many mini-applications in a single APK. It is implemented in a separate repository \textit{trustchain-superapp}\footnote{https://github.com/Tribler/trustchain-superapp} and includes kotlin-ipv8 as a Git submodule.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/superapp}
+    \caption{The dashboard of the super app composed of several decentralized mini-apps implemented on top of the kotlin-ipv8 library and TrustChain.}
+    \label{manyverse}
+\end{figure}
+
 \section{TrustChain: Scalable Distributed Ledger}
 
-% \subsection{TrustChain Explorer}
+\subsection{TrustChain Explorer}
 
 \section{PeerSocial: Decentralized Social Network}
 
 \subsection{Trustworthy Friendship Establishment}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/contacts}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/contacts_menu}
+    \caption{The list of contacts with online indicators, their latest messages with timestamps, and the connectivity status of the local UDP and Bluetooth endpoints.}
+    \label{manyverse}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/add_nearby_contact}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/add_remote_contact}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/add_contact}
+    \caption{The UI for adding a public key of a new nearby or remote contact to the trusted public key store, and associating the public key with a human-readable contact name.}
+    \label{manyverse}
+\end{figure}
+
+
 \subsection{PeerChat: Private Messaging Protocol}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/conversation_text}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/conversation}
+    \caption{The conversation UI containing incoming and outgoing text messages, image attachments, and delivery indications for outgoing messages.}
+    \label{manyverse}
+\end{figure}
 
 \subsection{Public Post Feed}
 
@@ -747,7 +877,7 @@ The connection manager contains all GATT-related communication logic. Each devic
 
 \section{DelftDAO: Framework for Permissionless Economic Activity}
 
-\chapter{Experiment}
+\chapter{Evaluation}
 
 \section{Analysis and Puncturing of Carrier Grade NAT}
 
@@ -787,7 +917,7 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
         \textbf{Operator} & \textbf{Mapping behavior} & \textbf{Filtering behavior} & \textbf{Binding lifetime} \\
         \hline
         \textbf{KPN} & EIM & APDF & ? \\
-        \textbf{Vodafone} & APDM & APDF & ? \\
+        \textbf{Vodafone} & EIM, refresh every 60 s & APDF & ? \\
         \textbf{T-Mobile} & EIM & APDF & ? \\
         \hline
     \end{tabular}
@@ -823,15 +953,15 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
         \hline
         \textbf{} & \textbf{T-Mobile} & \textbf{KPN} & \textbf{Vodafone} & \textbf{Tele2} & \textbf{T-Mobile Thuis} \\
         \hline
-        \textbf{T-Mobile} & \cellcolor{yellow!25}? &  &  &  &  \\
+        \textbf{T-Mobile} & \cellcolor{green!25} &  &  &  &  \\
         \hline
-        \textbf{KPN} & \cellcolor{green!25}1& \cellcolor{yellow!25}? &  &  &  \\
+        \textbf{KPN} & \cellcolor{green!25}& \cellcolor{green!25} &  &  &  \\
         \hline
-        \textbf{Vodafone} & \cellcolor{yellow!25}1 & \cellcolor{green!25}1 & \cellcolor{red!25}? &  &  \\
+        \textbf{Vodafone} & \cellcolor{yellow!25} & \cellcolor{green!25} & \cellcolor{yellow!25} &  &  \\
         \hline
-        \textbf{Tele2} & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \\
+        \textbf{Tele2} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \\
         \hline
-        \textbf{T-Mobile Thuis} & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 & \cellcolor{green!25}1 \\
+        \textbf{T-Mobile Thuis} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} \\
         \hline
     \end{tabular}
     \caption{The connectivity matrix representing the success rate of connection establishment between devices connected via different ISPs.}
@@ -856,3 +986,6 @@ The mapped ports seem to be assigned at random from the range of 10,000 ports, w
 % DHT + routing
 % WebRTC transport
 % multidevice support, key revocation chain
+% challenge the super app architecture
+% – rather refactor into content provider and split into separate APKs?
+% - use React Native for UI?
