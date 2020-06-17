@@ -21,7 +21,7 @@
 \ExecuteOptions{english}
 \ProcessOptions\relax
 
-\LoadClass[12pt]{book}
+\LoadClass[11pt]{book}
 
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
