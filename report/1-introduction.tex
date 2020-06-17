@@ -231,7 +231,7 @@ The library also provides TrustChain \cite{trustchain}, a scalable distributed l
 
 It is written in Python, as well as the rest of the Tribler stack. While using a single language during the whole development process is convenient for the Tribler team, the language choice has been a limiting factor when porting to mobile platforms such as Android. There have been attempts to run IPv8 on Android using \textit{python-for-android}\footnote{https://github.com/kivy/python-for-android} toolkit which allows to build a Python interpreter together with the application source code into an APK. However, the whole build process has shown to be fragile and impractical. Firstly, the build of the whole library takes almost an hour, which severely degrades developer experience and slows down iterative development. Secondly, it has turned out to be problematic to compile a 64-bit APK that would comply with the requirements for publishing on Google Play.
 
-%It is worth mentioning that there has been a long track of efforts to make mobile peer to peer systems work at TU Delft. There is a trustchain-android\footnote{https://github.com/Tribler/trustchain-android} project which implements TrustChain-inspired ledger and a basic UDP hole punching protocol. It has been written in Java, but the protocol is not compatible with TrustChain implemented as part of the py-ipv8 library. After analyzing the source code, it has been decided not to continue with the project.
+There has been a long track of efforts to explore the usage of mobile devices in peer to peer systems at TU Delft. The \textbf{app-to-app communicator}\footnote{https://github.com/Tribler/app-to-app-communicator} was an early prototype that implemented a basic UDP hole punching method to test the feasibility of a device to device overlay without any server infrastructure. The \textbf{self-compiling Android application}\footnote{https://github.com/Tribler/self-compile-Android} was an experimental project that bundled all tools from the Android SDK required to assemble an APK on Android. This has proven viability of trustworthy code execution without dependency on a centralized app store. The \textbf{trustchain-android}\footnote{https://github.com/Tribler/trustchain-android} project implements a TrustChain-like distributed ledger and a UDP hole punching protocol. It has been written in Java, but the protocol is not compatible with TrustChain which was originally implemented as part of the py-ipv8 library, even though it uses the same principles. %In this thesis, we will build on top of this existing research, but with usage of modern tools available today.
 
 \section{Network Address Translation}
 
@@ -768,7 +768,14 @@ Finally, an \textit{endpoint} is used to perform the communication. The library 
 
 \subsection{Community}
 
+Each community has to extend the abstract \texttt{Community} class which implements the \texttt{Overlay} interface. The only field left for the developer to define is \texttt{serviceId}. This can be an arbitrary 20-byte array represented as a hexadecimal string that uniquely identifies the community. The Community class defines several methods that can be used by its subclasses:
 
+\begin{itemize}
+    \item \texttt{getPeers(): List<Peer>} – Returns the list of connected peers that are present in this community.
+    \item \texttt{serializePacket(messageId: Int, payload: Serializable, sign: Boolean, encrypt: Boolean, recipient: Peer?): ByteArray} – Serializes a payload into a binary packet that can be sent over the transport.
+    \item \texttt{send(peer: Peer, data: ByteArray)} – Sends a packet to the target peer.
+    \item \texttt{send(address: Address, data: ByteArray)} – Sends a packet to the target IPv4 or Bluetooth address.
+\end{itemize}
 
 \subsection{Discovery Community}
 
@@ -846,30 +853,7 @@ class DemoCommunity : Community() {
 
 \subsection{Generating a Private Key}
 
-Every peer in has to generate a Curve25519 key pair, which provides an identity, and is used to sign and verify messages. A peer is identified by a member ID (mid), which is simply a SHA-1 hash of its public key.
-
-We can generate a private key with AndroidCryptoProvider.generateKey(). The key can then be serialized to a byte array with Key.keyToBin() method, and again deserialized using AndroidCryptoProvider.keyFromPrivateBin(ByteArray). When the app is launched for the first time, the key should be generated and persisted (e.g. in SharedPreferences). The previously generated key should be loaded on subsequent launches. The following code snippet does exactly that:
-
-\begin{minted}{kotlin}
-private const val PREF_PRIVATE_KEY = "private_key"
-
-private fun getPrivateKey(): PrivateKey {
-    // Load a key from the shared preferences
-    val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-    val privateKey = prefs.getString(PREF_PRIVATE_KEY, null)
-    return if (privateKey == null) {
-        // Generate a new key on the first launch
-        val newKey = AndroidCryptoProvider.generateKey()
-        prefs.edit()
-            .putString(PREF_PRIVATE_KEY, newKey.keyToBin().toHex())
-            .apply()
-        newKey
-    } else {
-        AndroidCryptoProvider.keyFromPrivateBin(privateKey.hexToBytes())
-    }
-}
-\end{minted}
-
+Every peer in has to generate a key pair which establishes the identity and is used to sign and verify messages. We can generate a private key with \texttt{AndroidCryptoProvider.generateKey()}. The key can then be serialized to a byte array with \texttt{Key.keyToBin()} method, and again deserialized using \texttt{AndroidCryptoProvider.keyFromPrivateBin(ByteArray)}. When the app is launched for the first time, the key should be generated and persisted. The previously generated key should be loaded on subsequent launches.
 
 \subsection{Library Initialization}
 
