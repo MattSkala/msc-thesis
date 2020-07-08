@@ -10,7 +10,9 @@ In the recent years, the idea of decentralization has attracted many in the engi
 %including Mobile IP, IPSec, and IPv6
 % TODO: client-server model, but recently trend is decentralization
 
-This thesis proposes and implements a protocol for peer to peer communication between any two devices. It is implemented as a Kotlin library which can be used on desktop, smartphones, tablets, and IoT devices. It can be used to deploy a truly ubiquitous network overlay which is available anytime and everywhere. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect peers behind different types of NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy. Peers are addressed by their public keys and their physical addresses at lower layers are abstracted away.
+This thesis proposes and implements a protocol for peer to peer communication between any two devices. It is implemented as a Kotlin library which can be used on desktop, smartphones, tablets, and IoT devices. It can be used to deploy a truly ubiquitous network overlay which is available anytime and everywhere. The protocol allows any two devices to establish a direct connection by taking advantage of NAT traversal techniques to connect peers behind different types of NATs. When the Internet connection is not available and peers are located in proximity, the connection can be established using Bluetooth Low Energy.
+
+%Peers are addressed by their public keys and their physical addresses at lower layers are abstracted away.
 
 % The protocol makes best effort to connect peers behind NATs. However, in case the connection is not possible, it resorts to a relay protocol. Bandwidth accounting prevents misusing the relay servers and provides incentive for relay operators. The protocol is completely decentralized and does not rely on any central entity.
 
@@ -20,7 +22,7 @@ This thesis proposes and implements a protocol for peer to peer communication be
 
 The robustness of the NAT traversal mechanism has been tested by conducting a connectivity check between devices using the networks of major mobile network operators and home broadband providers in the Netherlands. The mechanism has been shown to capable of establishing a connection in all tested network conditions.
 
-To demonstrate the usage of the library, a decentralized messaging application with end-to-end encryption, which allows trustworthy communication insusceptible to the man-in-the-middle attack, has been implemented. To get feedback on the APIs and general usability of the library, 4 teams of MSc students have been asked to develop non-trivial distributed applications on top of it.
+To demonstrate the usage of the library, a decentralized social network with public feeds and private end-to-end encrypted messaging, which allows trustworthy communication insusceptible to the man-in-the-middle attack, has been implemented. To get feedback on the APIs and general usability of the library, 4 teams of MSc students have been asked to develop non-trivial distributed applications on top of it.
 
 Compared to the state of the art solutions, the proposed library combines both nearby and Internet connectivity, does not require any central server, works on a variety of devices under challenging network conditions, and is completely open source.
 
@@ -29,19 +31,84 @@ Compared to the state of the art solutions, the proposed library combines both n
 
 \chapter{Problem Description}
 
-The architecture of the Internet has emerged in an evolutionary process rather than from a carefully designed grand plan. There is no central entity in charge of architectural decisions, or anyone with ability to turn it off. The Internet standards are developed by the working groups of Internet Engineering Task Force (IETF), a non-profit open standards organization composed of volunteers. Its evolution is based on a rough consensus about technical proposals, and on running code. While there are many conflicting opinions on its architecture, the general consensus is that the main goal of the Internet is to provide global connectivity by the \textit{Internet Protocol (IP)}. \cite{internetarchitecture} This ultimate goal requires cooperation of multiple parties, including researchers, developers, and commercial service providers.
+Over the last decade, the Internet and online services have become omnipresent in everyday lives of citizens across the world – communication, shopping, transportation, accommodation, or financial services are only some examples of services where most of the economic activity has already shifted to the online world. Most of these services are operated by so-called \textit{Big Tech} \cite{bigtech}, the largest and most dominant companies in the information technology industry – Facebook, Amazon, Google to name a few. In fact, 7 most valuable companies in the world are now tech companies. It seems to be nearly impossible to function in a digital world outside of the ecosystems created by the big tech. For instance, we require permission from Google and Apple to publish software for mobile devices. Their monopoly power means no other meaningful method exists to reach billions of smartphone users with newly created apps.
+
+\section{Antitrust Battle Against Big Tech}
+
+About 2 billion users interact with Facebook every day. It maintains 75\% social media market share. In a truly free market, they would compete by superior features and providing the best services for their customers to increase the consumer welfare. Instead, Facebook has chosen to mislead and exploit consumers and publishers. The evidence discussed in an analysis paper \cite{antitrust} shows that Facebook has for a decade "engaged in a long-term,
+integrated, anticompetitive strategy of half-truths about its privacy policies, exclusionary API manipulation, and anticompetitive acquisitions of nascent competitors". It has acquired various competitors such as Instagram (a social network emhasizing photo sharing) and WhatsApp (a widely popular messaging app) for a hefty premium, just to secure its dominance on the market. Because the market is characterized by a strong network effect, it is unlikely to change without a significant regulatory intervention or consumer uprising.
+
+Over the last months, Departement of Justice, Federal Trade Comission, and the European Union have all started investigations of Google, Facebook, Apple, and Amazon over potential illegal anticompetitive behavior. Very recently, in July 2020, hundreds of large businesses united during the \textit{Stop Hate for Profit}\footnote{https://www.stophateforprofit.org/} campaign and paused all advertising on Facebook platforms for a month to signal disagreement with company's practices and policies.
+
+\section{The Rise of Super Apps}
+
+Meanwhile, a new paradigm in smartphone software engineering has emerged from the East. In 2017, Tencent introduced the concept of a super app, an app that bundles an app store and allows to extend its functionality with mini apps. In a short time, 1 million apps have been developed for WeChat, the most popular communication platform in China and it has attracted 200 million daily users. \cite{wechatapps} WeChat now acts as the ultimate app for a Chinese citizen which bundles online messaging, social media, marketplaces, ride-hailing, food delivery, and other services. Last but not least, it offers financial services. In 2018, over 83\% of payments in China were made using mobile payment methods, with WeChat Pay and Alipay having the major share. \cite{chinapayments} While having the complete social graph and most of the real-world interactions in a single app is useful for providing a good user experience, it is also the perfect spy tool. WeChat is operated by Tencent, a big tech company which is essentially owned by the Chinese government. There has been strong evidence that the app is posing significant privacy risks and is being used to spy on its users. \cite{wechatspy}
+
+Inspired by the trend of super apps, other tech leaders seem to follow the trend. Uber has announced its works on a super app which is posed to become "an operating system for everyday life". It will combine food and grocery delivery, and various forms of transportation services. \cite{superuber} The Facebook app already combines not only social media, but also a marketplace, and soon will include mobile payments with the Project Libra which aims to become a new global payment system \footnote{https://libra.org}. Providing integrated experiences and having access to even more user data will further strengthen the power of already too powerful corporations.
+
+% WeChat: messaging, ride-hailing, payments, thousands of mini apps
+% Uber: operating system for everyday life – food and grocery delivery, transportation
+% ? Facebook: Marketplace, Events, Videos, Pages, Gaming, Messaging, soon payments with Project Libra
+
+% ideas:
+
+% big tech omnipresent services in lives of citizens across the world
+% Facebook reinforcing monopolistic position by purchasing WhatsApp and Instagram. no space for competition due to the network effect
+% Tencent owned by the Chinese government
+% with their money and data, big tech becomes more and more monopolistic
+% unethical behavior, potentially misusing and leaking private data
+% dictatorship, users usually left with no other option due to the lack of competition and the network effect
+% very recently, hundreds of businesses united during Stop Hate for Profit event and stopped advertising on Facebook over the month of July 2020, to signal disagreement with company's practices and policies.
+% our desire => monopolies replaced by sustainable Decentralized Autonomous Organizations (DAO)
+% providing the ideal user experience => trend towards a superapp
+% research question: can we provide a superapp experience similar to WeChat in a completely decentralized and trustless way, without any intermediaries and trusted third parties?
+
+% problem: vendor lock-in, network effect => monopoly => desire for open social network standard to allow adversarial interoperability
+% GDPR - ownership of data, data portability - ZIP export sent to e-mail, not really machine readable
+
+% big tech attack - we need permission of Google or Apple to publish software for mobile devices, enforcing rules not different from dictatorship
+
+% violation of end-to-end principle, internet architecture favors client-server architecture
+
+% architectural building blocks
+% - identity layer - public keys of friends or businesses you interact with
+% - secure end-to-end encrypted and authenticated communication of any message size
+% - NAT traversal mechanism for bypassing NAT boxes
+% - social-based overlay with automated IP address discovery based on UDP-puncturing capatable DHT
+% - distributed append-only database with eventual consistency – TrustChain
+
+% smartphones - dominant method for Internet access for a majority of the world's population
+% superapp approach - 1 million mini-apps on WeChat platform
+
+% disruptive ecosystem resilient against attacks by disintermediated corporate entities
+% - legal intimidation, layer-based attacks and creation of chilling effects
+% - ownership by everybody and nobody
+% - anyone can create and distribute a miniapp, self-moderation left solely on community, no centralized arbiters of truth
+
+% evaluation: 4 master student teams developed non-trivial distributed apps on top of our foundational architecture within 10 weeks: online voting, shared ownership of money, distributed marketplace
+
+% proof of principle: zero-server based messenger and social network
+
+% Spotify alternative disrupting music industry by removing middlemen in the distribution process, money goes directly to artists, a project evolved into a separate thesis
+
+
+% trust built into platforms with no interoperable standard
+
+%
+% The Internet standards are developed by the working groups of Internet Engineering Task Force (IETF), a non-profit open standards organization composed of volunteers. Its evolution is based on a rough consensus about technical proposals, and on running code. While there are many conflicting opinions on its architecture, the general consensus is that the main goal of the Internet is to provide global connectivity by the \textit{Internet Protocol (IP)}. \cite{internetarchitecture} This ultimate goal requires cooperation of multiple parties, including researchers, developers, and commercial service providers.
+
 
 % In an ideal world, there would be only one protocol on the Internet level to facilitate seamless integration between service providers, hardware manufacturers, and application developers. However, in practice, multiple protocols need to be supported by the network at the same time, e.g. during periods of transitioning to a newer version of IP.
 
 \section{End-to-End Principle Challenged}
 
-Most decisions related to protocol and system design have for a long time followed the \textit{end-to-end principle}, which states: "The function in question can completely and correctly be implemented only with the knowledge and help of the application standing at the end points of the communication system. Therefore, providing that questioned function as a feature of the communication system itself is not possible." \cite{endtoend}
+The architecture of the Internet has emerged in an evolutionary process rather than from a carefully designed grand plan. There is no central entity in charge of architectural decisions, or anyone with ability to turn it off. Most decisions related to protocol and system design have for a long time followed the \textit{end-to-end principle}, which states: "The function in question can completely and correctly be implemented only with the knowledge and help of the application standing at the end points of the communication system. Therefore, providing that questioned function as a feature of the communication system itself is not possible." \cite{endtoend}
 
 It implies that the job of the network should be merely to deliver datagrams as efficiently as possible, and the rest of the responsibilities should be pushed to the end points of the communication system. As every application has different requirements, providing additional features on the Internet layer would turn some applications not using those features less efficient. It is also cheaper to upgrade the end points to add new capabilities rather than replace the network infrastructure. A common example for supporting the end-to-end principle are delivery guarantees. In the ARPANET, the receipient would send \textit{Request For Next Message} packet every time a packet was delivered. However, some applications would still need to implement its own acknowledgements on the application level, to indicate that the messages were processed correctly. Similar examples can be found for supporting authentication, encryption, and other guarantees in communication systems.
 
 The end-to-end principle has been challenged by introduction of \textit{middleboxes}, intermediary nodes in the network that perform functions different from functions of a regular IP router. In \cite{rfc3234}, an extensive catalogue of 22 different middlebox classes has been analyzed. Network address translators (NATs), packet classifiers, IP firewalls, application layer gateways, or proxies are just a few examples of components hidden in the network. While most of them try to be transparent, the behavior of certain middleboxes can severly impact the end-to-end performance, either by delaying packet retransmission, or aborting user sessions entirely in case they crash. Some of them perform advanced logic on different protocol layers and keep a hard state, which violates the end-to-end principle stating that the network should be kept as simple as possible.
 
-\section{Overcoming Address Exhaustion}
+% \section{Overcoming Address Exhaustion}
 
 In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of NATs which allows a single address to be shared across multiple devices.
 
@@ -65,20 +132,44 @@ Even in places with relatively mature infrastructure, there are occasionally con
 
 Another problem related to communication is ensuring message authenticity and privacy. Most of the commonly used protocols have adopted \textit{Transport Layer Security (TLS)} protocol to secure all communication between clients and servers. The trust in the system is enforced by using \textit{public key infrastructure (PKI)} with trusted certificate authorities. However, public key infrastructure is not easy to adopt to a peer-to-peer system with self-sovereign identities.
 
+\iffalse
 \section{Re-decentralization of Internet Infrastructure}
 
 While the Internet is built on the principles of decentralization from the ground up, we cannot say so about the Web and other services built on top of it. The majority of the websites is operated by a few hosting companies and most of the static content is served by a few \textit{Content Delivery Networks (CDNs)}. For example, \textit{Cloudflare} currently powers 10 \% of all internet traffic\footnote{https://blog.cloudflare.com/cloudflare-traffic/}. Since there is a central point of failure, if a provider experiences outage, a large part of the internet goes down.
 
 The inventor of the World Wide Web has proposed a Solid \cite{solid} as an architectural pattern for building the next generation of decentralized social applications. It is based on the principle that users own their data and have freedom of choice where to store them, which significantly improves privacy and data reusability. As the application logic is decoupled from the data storage servers, multiple applications can access them same data if allowed by the user.
 
-\section{Research Question}
+\fi
 
-While it is out of scope of this thesis to provide a complete solution for the next generation of web applications, the afore-mentioned problems and challenges lead us to the following question:
+\section{Research Focus}
+
+While it is out of scope of this thesis to provide the complete solution for the next generation of web applications, the afore-mentioned problems and challenges lead us to the following question:
+
+\begin{displayquote}
+\textbf{How can we create a self-organizing technology stack that would allow to build decentralized alternatives of the services currently provided by the big tech companies?}
+\end{displayquote}
+
+Our work consists of 2 parts. First, we design a zero-server architecture and develop several networking primitives which remove the need for central control by any trusted third party. No central element exists which can form a performance bottleneck or point-of-failure. These serve as the basic building blocks for creating full fledged Facebook alternative with full interoperability and data portability. We have not created a full alternative to Facebook within the context of a single master thesis. However, we provide the basis for it and claim that our infrastructure will scale to usage by the 2 billion existing Facebook users without fundamental alterations. Our Internet-deployed network primitives are:
 
 \begin{itemize}
-    \item \textbf{Can we devise a protocol facilitating trustworthy device-to-device communication between smartphones under challenging network conditions without using a central server?}
+    \item Identity layer based on public keys of trusted contacts with secure public key exchange
+    \item Authenticated communication bypassing NAT boxes and other imperfect hardware
+    \item Establishing connection with known contacts using a social-based zero-server overlay with automated Internet address discovery based on a UDP-puncturing capable DHT
+    \item Secure end-to-end encrypted messaging of any message size
+    \item Distributed bookkeeping with tamper-resilience using TrustChain to synchronize data, prevent spam and abuse
 \end{itemize}
 
+\iffalse
+Our zero-server architecture is also meticulously designed to offer another unique property: resilience against legal attacks. Legal action may be expected when a monopoly is attacked. We believe that this thesis proves the first proof-of-principle of a disruptive open innovation ecosystem which is resilient against attacks by disrupted or disintermediated corporate entities. Possible legal attacks includes: legal intimidation, lawyer-based attacks and creation of chilling effects. Our unique approach to governance gives ownership to both nobody and everybody. By creating an academically pure form of self-organisation we create a leaderless infrastructure in which even the original creators have no special powers. It is difficult to block, disrupt or shutdown our zero-server approach with either legal or technological means when used by citizens at scale.
+\fi
+
+We then take advantage of these building blocks to build our own decentralized version of a super app with ability to extend its features using mini-apps. The first version of a distributed social network with private messaging and a public feed has been developed as the proof of principle that service like Facebook could potentially be built using this stack.
+%On top of our networking primitives we facilitate an open innovation ecosystem.
+%Every user can extend the functionality of the platform freely. No gatekeepers exists to moderate mini-apps, this relies on self-moderation by the community.
+
+We also conducted an experiment around the mini-apps to determine how easy they are to develop. Various student development teams with 17 members in total successfully created various mini-apps with our zero-server architecture. Developed mini-apps within a 10-week period include: group creation and shared ownership of money, secure online quorum-based voting, decentralised machine learning, and sharing of music records. The music sharing app has grown into another full master thesis aiming to remove all proprietary infrastructure between artists and ears of listeners with a cost-free ecosystem.
+
+\iffalse
 We analyze the question in more detail:
 \begin{itemize}
     \item The communication should be \textbf{trustworthy}, which means we can verify that we received the message from the person that claims to be its sender. The communication can be optionally encrypted to provide privacy on top of authenticity.
@@ -86,6 +177,7 @@ We analyze the question in more detail:
     \item The protocol should be able to work under \textbf{challenging network conditions}, which means it should be robust against the presence of various middleboxes. Mainly, it should be able to establish connection in presence of carrier-grade NATs deployed by mobile network operators.
     \item The communication protocol should in theory work on both most popular \textbf{smartphone} operating systems and support their most commonly used versions. However, supporting only the most commonly used OS would be sufficient for the prototype.
 \end{itemize}
+\fi
 
 % TODO: mention SOLID
 
@@ -119,23 +211,38 @@ We analyze the question in more detail:
 
 \chapter{State of the Art}
 
+% TODO: better reasoning why we are researching these topics
+
 In this chapter, we conduct a short survey of various topics related to P2P communication. We start by analyzing existing solutions and platforms for decentralized communication. We continue by introducing the problem of network address translation (NAT) and commonly used solutions for fixing the broken internet infrastructure by techniques known as NAT traversal. Finally, we introduce wireless communication technologies provided by modern smartphone devices and analyze them based on practical usability for infrastructureless communication.
 
 \section{Decentralized Communication Platforms}
 
-There are many projects dealing with the problem of peer to peer (P2P) communication on different levels, ranging from general-purpose libraries that can be used to build applications (libp2p, IPv8), to feature-packed platforms providing social networking features on top of their custom-designed protocols (Briar, Bridgefy, Berty, Secure Scuttlebutt). We try to analyze their functionality from the technical and usability perspective, state their advantages and shortcomings, and propose improvements when possible.
+In general, we can divide platforms into three classes based on their architecture and degree of decentralization. The traditional \textit{centralized} platforms such as Twitter, Facebook, and Instagram are operated by large prof-oriented companies. All data are stored in data silos owned by those companies and used for targeting advertisements and other marketing purposes.
+
+\textit{Decentralized} platforms, where everyone usually runs their own node and is completely in control of their data. There are many projects dealing with the problem of peer to peer (P2P) communication on different levels, ranging from general-purpose libraries that can be used to build applications (libp2p, IPv8), to feature-packed platforms providing social networking features on top of their custom-designed protocols (Briar, Bridgefy, Berty, Secure Scuttlebutt). We try to analyze their functionality from the technical and usability perspective, state their advantages and shortcomings, and propose improvements when possible.
+
+\textit{Federated} platforms represent the middle ground between completely centralized and decentralized platforms. They consist of an ensemble of interconnected servers that communicate with each other using open protocols.
 
 \subsection{Fediverse}
-TODO: federated servers used for web publishing (Mastodon, PeerTube, Friendica)
+
+Fediverse is an ensemble of interconnected servers that run open-source social networks and communicate with each other. Historically, there are many open protocols for social networking including diaspora, OStatus, DFRN and many projects built on top of them. In 2018, the World Wide Web Consorcium presented the ActivityPub protocol aming to improve interoperability between platforms. Some of the most common platforms implementing this protocol are Friendica, Mastodon, or PeerTube.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{screens/mastodon}
+    \caption{The screenshot of mastodon.social, an example of a federated social network}
+    \label{manyverse}
+\end{figure}
+
+In contrast to mainstream social platforms, federated networks are developed by communities of people, independent from any corporation. Anyone can run its own Fediverse server, and users have to choose the operator through which they are connecting to the network. As this improves privacy by open source protocol, users still have to some extent trust their server operators. There is usually a lack of incentivization for server operators. Some operators charge a fee for joining the network to fund their operation, which however contradicts the freedom of communication.
 
 \subsection{libp2p}
 
 % TODO: libp2p stack
 
-libp2p\footnote{https://libp2p.io} is a modularized peer-to-peer networking stack and library developed by Protocol Labs, a non-profit company behind the Interplanetary File System (IPFS)\footnote{https://ipfs.io}, a distributed filesystem comibing some fundamental ideas from BitTorrent and Git. They extracted the networking logic from the IPFS project into a library after realizing it could be useful for other applications as well. This is to date probably the most widely known universal P2P library. It was originally implemented in Go and JavaScript, and there are ongoing efforts to provide implementations in Rust, Haskell, Kotlin, and Python. One of the promises of the Kotlin implementation will be the ability to run it natively both on JVM and Android runtime.
+libp2p\footnote{https://libp2p.io} is a modularized peer-to-peer networking stack and library. It is being developed by Protocol Labs, a non-profit company behind the Interplanetary File System (IPFS)\footnote{https://ipfs.io}, a distributed filesystem combinig some fundamental ideas from BitTorrent and Git. They extracted the networking logic from the IPFS project into a library after realizing it could be useful for other applications as well. It is to date probably the most widely known universal P2P library. It was originally implemented in Go and JavaScript, and there are ongoing efforts to provide implementations in Rust, Haskell, Kotlin, and Python. One of the promises of the Kotlin implementation will be the ability to run it natively both on JVM and Android runtime.
 
-The library is composed of several layers, where each can be implemented by one of interchangeable modules. It implements port mapping and hole punching inspired by STUN to deal with NATs. The \textit{identify} protocol allows nodes to discover their public address and the \textit{AutoNAT} service allows them to discover the NAT behavior by forcing other peers in the network to attempt to connect to them. When the NAT traversal fails, there is a circuit relay protocol that allows peers to communicate indirectly using intermediate peers, which similar to the functionality of TURN servers. Currently, the relay protocol requires a list of relays to connect to. An \textit{autorelay} protocol for discovering public relays is under active development.
-
+The library is composed of several layers, where each can be implemented by one of interchangeable modules. It is presented as a collection of peer-to-peer protocols for finding peers, connecting to them for finding content, and transferring it. It implements port mapping and hole punching inspired by STUN to deal with NATs. The \textit{identify} protocol allows nodes to discover their public address and the \textit{AutoNAT} service allows them to discover the NAT behavior by forcing other peers in the network to attempt to connect to them. When the NAT traversal fails, there is a circuit relay protocol that allows peers to communicate indirectly using intermediate peers, which similar to the functionality of TURN servers. Currently, the relay protocol requires a list of relays to connect to. An \textit{autorelay} protocol for discovering public relays is under active development. \textit{Kademlia DHT} is used as a primary mechanism for peer routing, i.e. finding routable addresses of peers based on their public keys.
 
 % \subsection{Nearby Connections API}
 
@@ -723,29 +830,6 @@ The last and the most common approach is to use the languages officialy supporte
 % Kotlin, Multiplatform - JVM + Android, but can be compiled to Native for iOS as well
 % Android Things – IoT
 
-\section{Project Structure}
-
-The project consists of two sub-projects that are maintained in two separate repositories: the P2P library called \textit{kotlin-ipv8}\footnote{https://github.com/Tribler/kotlin-ipv8}, and the application built on top of this library. The kotlin-ipv8 library currently supports Android and JVM targets, and the project is composed of the following modules:
-
-\begin{itemize}
-    \item \texttt{ipv8} \textit{(JVM library)}: The core of the IPv8 implementation, a pure Kotlin library module.
-    \item \texttt{ipv8-android} \textit{(Android library)}: Android-specific dependencies and helper classes for running IPv8 in Android Runtime.
-    \item \texttt{demo-android} \textit{(Android app)}: An Android application demonstrating the initialization of the \texttt{ipv8-android} library.
-    \item \texttt{ipv8-jvm} \textit{(JVM library)}: JVM-specific dependencies for running IPv8 on JVM.
-    \item \texttt{demo-jvm} \textit{(JVM app)}: The CLI app demonstrating the usage of the \texttt{ipv8-jvm} library.
-    \item \texttt{tracker} \textit{(JVM app)}: The bootstrap server implementation.
-\end{itemize}
-
-The ipv8 module contains the core logic that is shared across JVM and Android platforms. To ensure the stability of the project and make contributions by other developers easier, a development and \textit{continuous integration (CI)} infrastructure has been set up. The tests are written using the test framework \textit{JUnit}\footnote{https://junit.org/} and mocking framework \textit{mockk}\footnote{https://mockk.io/}. The code coverage is calculated and reported using \textit{Java Code Coverage Library (JaCoCo)}. The \textit{ktlint}\footnote{https://ktlint.github.io} linter is used to ensure the consistent code style, and Android Lint to check for common errors related to the usage of Android SDK. All tools are run automatically for every commit and merge request by a \textit{GitHub Actions} workflow. \textit{codecov.io}\footnote{https://codecov.io} is used to report the changes in code coverage for every pull request. The ipv8 module has extensive code coverage of 72\%.
-
-%The Gradle build system is used to specify the build and runtime dependencies.
-
-% JVM vs. Android
-% unit tests, TODO: Android tests
-% library vs. super app separation
-
-% \section{Maintaining Backward Compatibility}
-% continuous improvement while maintaining backward compatibility with 10 year old ipv8 implementation
 
 \section{System Architecture}
 
@@ -826,6 +910,31 @@ The bootstrap server can be started with the following command, where a port can
 
 The list of default bootstrap servers that are contacted upon initialization is defined in the \texttt{Community.DEFAULT\_ADDRESSES} field.
 
+\section{Project Structure}
+
+The project consists of two sub-projects that are maintained in two separate repositories: the P2P library called \textit{kotlin-ipv8}\footnote{https://github.com/Tribler/kotlin-ipv8}, and the application built on top of this library. The kotlin-ipv8 library currently supports Android and JVM targets, and the project is composed of the following modules:
+
+\begin{itemize}
+    \item \texttt{ipv8} \textit{(JVM library)}: The core of the IPv8 implementation, a pure Kotlin library module.
+    \item \texttt{ipv8-android} \textit{(Android library)}: Android-specific dependencies and helper classes for running IPv8 in Android Runtime.
+    \item \texttt{demo-android} \textit{(Android app)}: An Android application demonstrating the initialization of the \texttt{ipv8-android} library.
+    \item \texttt{ipv8-jvm} \textit{(JVM library)}: JVM-specific dependencies for running IPv8 on JVM.
+    \item \texttt{demo-jvm} \textit{(JVM app)}: The CLI app demonstrating the usage of the \texttt{ipv8-jvm} library.
+    \item \texttt{tracker} \textit{(JVM app)}: The bootstrap server implementation.
+\end{itemize}
+
+The ipv8 module contains the core logic that is shared across JVM and Android platforms. To ensure the stability of the project and make contributions by other developers easier, a development and \textit{continuous integration (CI)} infrastructure has been set up. The tests are written using the test framework \textit{JUnit}\footnote{https://junit.org/} and mocking framework \textit{mockk}\footnote{https://mockk.io/}. The code coverage is calculated and reported using \textit{Java Code Coverage Library (JaCoCo)}. The \textit{ktlint}\footnote{https://ktlint.github.io} linter is used to ensure the consistent code style, and Android Lint to check for common errors related to the usage of Android SDK. All tools are run automatically for every commit and merge request by a \textit{GitHub Actions} workflow. \textit{codecov.io}\footnote{https://codecov.io} is used to report the changes in code coverage for every pull request. The ipv8 module has extensive code coverage of 72\%.
+
+%The Gradle build system is used to specify the build and runtime dependencies.
+
+% JVM vs. Android
+% unit tests, TODO: Android tests
+% library vs. super app separation
+
+% \section{Maintaining Backward Compatibility}
+% continuous improvement while maintaining backward compatibility with 10 year old ipv8 implementation
+
+\iffalse
 \section{Library Usage}
 
 In this section, we describe the usage of the kotlin-ipv8 library from the perspective of the application developer. We will show how to create a simple overlay network, and send and handle custom messages. Finally, we will configure and start the IPv8 stack, and load our overlay with a discovery strategy, which will allow us to discover other peers in the community using the bootstrap server.
@@ -936,6 +1045,8 @@ private fun onMessage(packet: Packet) {
 }
 \end{minted}
 
+\fi
+
 
 \chapter{Decentralized Super App}
 
@@ -986,6 +1097,13 @@ The application follows the concept of a super app, and bundles many mini-applic
 \end{figure}
 
 \subsection{Public Post Feed}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/feed}
+    \caption{The social feed with likes and replies.}
+    \label{manyverse}
+\end{figure}
 
 
 %\section{Bluetooth Communication}
