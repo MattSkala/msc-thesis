@@ -3,9 +3,9 @@
 %The Internet was created with the idea that any two computers connected to the common network should be able to communicate with each other. In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. %The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet.
 %To deal with address exhaustion, internet providers were forced to deploy \textit{Network Address Translation (NAT)} which allows a single address to be shared across multiple devices, but also makes it difficult to communicate between devices without using additional trusted servers.
 
-The Internet was created with the idea that any two computers connected to the shared network should be able to communicate with each other. It has also been built on the principles of decentralization, without any central entity having power to take the network down. Yet, 50 years later, we live in the world where most of the services are centralized and user data are stored on the servers owned by a few large profit-oriented companies.
+The Internet was created with the idea that any two computers connected to the shared network should be able to communicate with each other. It has also been built on the principles of decentralization, without any central entity having the power to take the network down. Yet, 50 years later, we live in a world where most of the services are centralized and user data are stored on the servers owned by a few large profit-oriented companies.
 
-In the recent years, the idea of decentralization has attracted many in the engineering and research community. Since the introduction of cryptocurrencies in the last decade, there have been many discussions on whether we can decentralize other services, such as social media, or web. With the trend of decentralization, applications are shifting from the client-server model to peer-to-peer, which brings many challenges and calls for a new networking stack.
+In recent years, the idea of decentralization has attracted many in the engineering and research community. Since the introduction of cryptocurrencies in the last decade, there have been many discussions on whether we can decentralize other services, such as social media, or web. With the trend of decentralization, applications are shifting from the client-server model to peer-to-peer, which brings many challenges and calls for a new networking stack.
 
 %including Mobile IP, IPSec, and IPv6
 % TODO: client-server model, but recently trend is decentralization
@@ -31,18 +31,18 @@ Compared to the state of the art solutions, the proposed library combines both n
 
 \chapter{Problem Description}
 
-Over the last decade, the Internet and online services have become omnipresent in everyday lives of citizens across the world – communication, shopping, transportation, accommodation, or financial services are only some examples of services where most of the economic activity has already shifted to the online world. Most of these services are operated by so-called \textit{Big Tech} \cite{bigtech}, the largest and most dominant companies in the information technology industry – Facebook, Amazon, Google to name a few. In fact, 7 most valuable companies in the world are now tech companies. It seems to be nearly impossible to function in a digital world outside of the ecosystems created by the big tech. For instance, we require permission from Google and Apple to publish software for mobile devices. Their monopoly power means no other meaningful method exists to reach billions of smartphone users with newly created apps.
+Over the last decade, the Internet and online services have become omnipresent in everyday lives of citizens across the world – communication, shopping, transportation, accommodation, or financial services are only some examples of services where most of the economic activity has already shifted to the online world. Most of these services are operated by so-called \textit{Big Tech} \cite{bigtech}, the largest and most dominant companies in the information technology industry – Facebook, Amazon, Google to name a few. 7 most valuable companies in the world are now tech companies. It seems to be nearly impossible to function in a digital world outside of the ecosystems created by the big tech. For instance, we require permission from Google and Apple to publish software for mobile devices. Their monopoly power means no other meaningful method exists to reach billions of smartphone users with newly created apps.
 
 \section{Antitrust Battle Against Big Tech}
 
-About 2 billion users interact with Facebook every day. It maintains 75\% social media market share. In a truly free market, they would compete by superior features and providing the best services for their customers to increase the consumer welfare. Instead, Facebook has chosen to mislead and exploit consumers and publishers. The evidence discussed in an analysis paper by prof. Fiona M. Scott Morton from Yale University shows that \cite{antitrust} shows that Facebook has for a decade "engaged in a long-term,
-integrated, anticompetitive strategy of half-truths about its privacy policies, exclusionary API manipulation, and anticompetitive acquisitions of nascent competitors". It has acquired various competitors such as Instagram (a social network emhasizing photo sharing) and WhatsApp (a widely popular messaging app) for a hefty premium, just to secure its dominance on the market. Because the market is characterized by a strong network effect, it is unlikely to change without a significant regulatory intervention or consumer uprising.
+About 2 billion users interact with Facebook every day. It maintains 75\% social media market share. In a truly free market, they would compete by superior features and providing the best services for their customers to increase consumer welfare. Instead, Facebook has chosen to mislead and exploit consumers and publishers. The evidence discussed in an analysis paper by prof. Fiona M. Scott Morton from Yale University shows that \cite{antitrust} shows that Facebook has for a decade "engaged in a long-term,
+integrated, anti-competitive strategy of half-truths about its privacy policies, exclusionary API manipulation, and anti-competitive acquisitions of nascent competitors". It has acquired various competitors such as Instagram (a social network emphasizing photo sharing) and WhatsApp (a widely popular messaging app) for a hefty premium, just to secure its dominance on the market. Because the market is characterized by a strong network effect, it is unlikely to change without a significant regulatory intervention or consumer uprising.
 
-Over the last months, Departement of Justice, Federal Trade Comission, and the European Union have all started investigations of Google, Facebook, Apple, and Amazon over potential illegal anticompetitive behavior. Very recently, in July 2020, hundreds of large businesses united during the \textit{Stop Hate for Profit}\footnote{https://www.stophateforprofit.org/} campaign and paused all advertising on Facebook platforms for a month to signal disagreement with company's practices and policies.
+Over the last months, Departement of Justice, Federal Trade Commission, and the European Union have all started investigations of Google, Facebook, Apple, and Amazon over potential illegal anticompetitive behavior. Very recently, in July 2020, hundreds of large businesses united during the \textit{Stop Hate for Profit}\footnote{https://www.stophateforprofit.org/} campaign and paused all advertising on Facebook platforms for a month to signal disagreement with company's practices and policies.
 
 \section{The Threat of Super Apps}
 
-Meanwhile, a new paradigm in smartphone software engineering has emerged from the East. In 2017, Tencent introduced the concept of a super app, an app that bundles an app store and allows to extend its functionality with mini apps. In a short time, 1 million apps have been developed for WeChat, the most popular communication platform in China and it has attracted 200 million daily users. \cite{wechatapps} WeChat now acts as the ultimate app for a Chinese citizen which bundles online messaging, social media, marketplaces, ride-hailing, food delivery, and other services. Last but not least, it offers financial services. In 2018, over 83\% of payments in China were made using mobile payment methods, with WeChat Pay and Alipay having the major share. \cite{chinapayments} While having the complete social graph and most of the real-world interactions in a single app is useful for providing a good user experience, it also makes it the perfect spy tool. It acts as an unprecented vault of social, financial, personal, and behavioral data. WeChat is operated by Tencent, a big tech company which is essentially owned by the Chinese government. There has been strong evidence that the app is posing significant privacy risks and is being used to spy on its users. \cite{wechatspy}
+Meanwhile, a new paradigm in smartphone software engineering has emerged from the East. In 2017, Tencent introduced the concept of a super app, an app that bundles an app store and allows to extend its functionality with mini-apps. In a short time, 1 million apps have been developed for WeChat, the most popular communication platform in China and it has attracted 200 million daily users. \cite{wechatapps} WeChat now acts as the ultimate app for a Chinese citizen which bundles online messaging, social media, marketplaces, ride-hailing, food delivery, and other services. Last but not least, it offers financial services. In 2018, over 83\% of payments in China were made using mobile payment methods, with WeChat Pay and Alipay having the major share. \cite{chinapayments} While having a complete social graph and most of the real-world interactions in a single app is useful for providing a good user experience, it also makes it the perfect spy tool. It acts as an unprecedented vault of social, financial, personal, and behavioral data. WeChat is operated by Tencent, a big tech company which is essentially owned by the Chinese government. There has been strong evidence that the app is posing significant privacy risks and is being used to spy on its users. \cite{wechatspy}
 
 Inspired by the trend of super apps, other tech leaders seem to follow the trend. Uber has announced its works on a super app which is posed to become "an operating system for everyday life". It will combine food and grocery delivery, and various forms of transportation services. \cite{superuber} The Facebook app already combines not only social media, but also a marketplace, and soon will include mobile payments with the Project Libra which aims to become a new global payment system \footnote{https://libra.org}. Providing integrated experiences and having access to even more personal data ultimately makes corporations more powerful than sovereign nations.
 
@@ -102,21 +102,21 @@ Inspired by the trend of super apps, other tech leaders seem to follow the trend
 
 \section{End-to-End Principle Challenged}
 
-The architecture of the Internet has emerged in an evolutionary process rather than from a carefully designed grand plan. There is no central entity in charge of architectural decisions, or anyone with ability to turn it off. Most decisions related to protocol and system design have for a long time followed the \textit{end-to-end principle}, which states: "The function in question can completely and correctly be implemented only with the knowledge and help of the application standing at the end points of the communication system. Therefore, providing that questioned function as a feature of the communication system itself is not possible." \cite{endtoend}
+The architecture of the Internet has emerged in an evolutionary process rather than from a carefully designed grand plan. There is no central entity in charge of architectural decisions or anyone with the ability to turn it off. Most decisions related to protocol and system design have for a long time followed the \textit{end-to-end principle}, which states: "The function in question can completely and correctly be implemented only with the knowledge and help of the application standing at the end points of the communication system. Therefore, providing that questioned function as a feature of the communication system itself is not possible." \cite{endtoend}
 
-It implies that the job of the network should be merely to deliver datagrams as efficiently as possible, and the rest of the responsibilities should be pushed to the end points of the communication system. As every application has different requirements, providing additional features on the Internet layer would turn some applications not using those features less efficient. It is also cheaper to upgrade the end points to add new capabilities rather than replace the network infrastructure. A common example for supporting the end-to-end principle are delivery guarantees. In the ARPANET, the receipient would send \textit{Request For Next Message} packet every time a packet was delivered. However, some applications would still need to implement its own acknowledgements on the application level, to indicate that the messages were processed correctly. Similar examples can be found for supporting authentication, encryption, and other guarantees in communication systems.
+It implies that the job of the network should be merely to deliver datagrams as efficiently as possible, and the rest of the responsibilities should be pushed to the end points of the communication system. As every application has different requirements, providing additional features on the Internet layer would turn some applications not using those features less efficient. It is also cheaper to upgrade the end points to add new capabilities rather than replace the network infrastructure. A common example for supporting the end-to-end principle is delivery guarantees. In the ARPANET, the recipient would send \textit{Request For Next Message} packet every time a packet was delivered. However, some applications would still need to implement their own acknowledgements on the application level, to indicate that the messages were processed correctly. Similar examples can be found for supporting authentication, encryption, and other guarantees in communication systems.
 
-The end-to-end principle has been challenged by introduction of \textit{middleboxes}, intermediary nodes in the network that perform functions different from functions of a regular IP router. In \cite{rfc3234}, an extensive catalogue of 22 different middlebox classes has been analyzed. Network address translators (NATs), packet classifiers, IP firewalls, application layer gateways, or proxies are just a few examples of components hidden in the network. While most of them try to be transparent, the behavior of certain middleboxes can severly impact the end-to-end performance, either by delaying packet retransmission, or aborting user sessions entirely in case they crash. Some of them perform advanced logic on different protocol layers and keep a hard state, which violates the end-to-end principle stating that the network should be kept as simple as possible.
+The end-to-end principle has been challenged by the introduction of \textit{middleboxes}, intermediary nodes in the network that perform functions different from functions of a regular IP router. In \cite{rfc3234}, an extensive catalogue of 22 different middlebox classes has been analyzed. Network address translators (NATs), packet classifiers, IP firewalls, application layer gateways, or proxies are just a few examples of components hidden in the network. While most of them try to be transparent, the behavior of certain middleboxes can severely impact the end-to-end performance, either by delaying packet retransmission or aborting user sessions entirely in case they crash. Some of them perform advanced logic on different protocol layers and keep a hard state, which violates the end-to-end principle stating that the network should be kept as simple as possible.
 
 % \section{Overcoming Address Exhaustion}
 
-In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of NATs which allows a single address to be shared across multiple devices.
+In the Internet Protocol, each computer gets assigned an address which is subsequently used for packet routing. The most common version of the protocol, IPv4, uses a 32-byte address space which is not enough to uniquely identify all devices on the planet. To deal with IPv4 address exhaustion, internet providers were forced to deploy different types of NATs which allow a single address to be shared across multiple devices.
 
-Traditionally, each consumer would have a NAT implemented in the router located at the edge of the network. It would serve as a gateway between the local area network (LAN) and the wide area network (WAN), the Internet. This type of NAT usually maps all addresses inside LAN to a single external WAN address. It also provides additional features such as firewall, which only allows incoming traffic on ports that are explicitly open, or on whose the client initiated the communication first.
+Traditionally, each consumer would have a NAT implemented in the router located at the edge of the network. It would serve as a gateway between the local area network (LAN) and the wide area network (WAN), the Internet. This type of NAT usually maps all addresses inside LAN to a single external WAN address. It also provides additional features such as firewall, which only allows incoming traffic on explicitly open ports, or on whose the client initiated the communication first.
 
 % TODO: Decide whether to stay here or in state of the art
 
-However, to further conserve the address space, and facilitate transitions to IPv6 with backwards compatibility of IPv4, it has become a trend among internet service providers to implement a NAT in their infrastructure. This topology is called a \textit{carrier-grade NAT} (CGN). Carrier-grade NAT is by definition managed by the network operator and the customer does not have any control over it. CGN usually implement a complex functionality to ensure reliability for thousands subscribers and compliance with legal regulations, which again violates the end-to-end principle. Inability to manage open ports breaks the communication model of many peer-to-peer applications which usually have to reside to using a proxy server for relaying communication.
+However, to further conserve the address space, and facilitate transitions to IPv6 with backwards compatibility of IPv4, it has become a trend among internet service providers to implement a NAT in their infrastructure. This topology is called a \textit{carrier-grade NAT} (CGN). Carrier-grade NAT is by definition managed by the network operator and the customer does not have any control over it. CGN usually implement a complex functionality to ensure reliability for thousands of subscribers and compliance with legal regulations, which again violates the end-to-end principle. Inability to manage open ports breaks the communication model of many peer-to-peer applications which usually have to reside to using a proxy server for relaying communication.
 
 To mitigate this issue, \textit{Port Control Protocol (PCP)} \cite{pcp} has been designed and recommended by IEFT to enable port forwarding in CGN deployments. However, our experiments have shown that most providers do not have this mechanism deployed at the moment and that some providers have deployed a version of CGN that does not satisfy NAT behavioral requirements \cite{behave}, which makes P2P communication nearly impossible.
 
@@ -126,11 +126,11 @@ To mitigate this issue, \textit{Port Control Protocol (PCP)} \cite{pcp} has been
 
 \section{Freedom of Trustworthy Communication}
 
-The principle of network neutrality states that ISPs must treat all traffic equally and not discriminate based on its content, addresses of recipients, or methods of communication. However, we can see that this principle is violated in many cases, some of them more worrying than others. There are several countries that enforce Internet censorship either by simple IP address blocking, or advanced deep packet inspection, preventing people from communicating freely.
+The principle of network neutrality states that ISPs must treat all traffic equally and not discriminate based on its content, addresses of recipients, or methods of communication. However, we can see that this principle is violated in many cases, some more worrying than others. There are several countries enforcing Internet censorship either by simple IP address blocking, or advanced deep packet inspection, preventing people from communicating freely.
 
-Even in places with relatively mature infrastructure, there are occasionally connectivity issues at places with high concentration of people, such as conferences or festivals, causing congestion in the infrastructure networks. The increasing capabilities of smartphones and novel wireless networking technologies open up possibilities to a whole new range of applications that can communicate without the need for the Internet connection. The ideal communication protocol should be able to use those when possible. It has been seen how the Bluetooth technology can be useful in creating a mesh network during the Hong Kong protests in 2018 and 2019, where protesters relied on peer-to-peer communication apps as a communication tactic.
+Even in places with relatively mature infrastructure, there are occasionally connectivity issues at places with a high concentration of people, such as conferences or festivals, causing congestion in the infrastructure networks. The increasing capabilities of smartphones and novel wireless networking technologies open up possibilities to a whole new range of applications that can communicate without the need for the Internet connection. The ideal communication protocol should be able to use those when possible. It has been seen how the Bluetooth technology can be useful in creating a mesh network during the Hong Kong protests in 2018 and 2019, where protesters relied on peer-to-peer communication apps as a communication tactic.
 
-Another problem related to communication is ensuring message authenticity and privacy. Most of the commonly used protocols have adopted \textit{Transport Layer Security (TLS)} protocol to secure all communication between clients and servers. The trust in the system is enforced by using \textit{public key infrastructure (PKI)} with trusted certificate authorities. However, public key infrastructure is not easy to adopt to a peer-to-peer system with self-sovereign identities.
+Another problem related to communication is ensuring message authenticity and privacy. Most of the commonly used protocols have adopted \textit{Transport Layer Security (TLS)} protocol to secure all communication between clients and servers. The trust in the system is enforced by using \textit{public key infrastructure (PKI)} with trusted certificate authorities. However, public key infrastructure is not easy to adapt to a peer-to-peer system with self-sovereign identities.
 
 \iffalse
 \section{Re-decentralization of Internet Infrastructure}
@@ -146,24 +146,24 @@ The inventor of the World Wide Web has proposed a Solid \cite{solid} as an archi
 While it is out of scope of this thesis to provide the complete solution for the next generation of web applications, the afore-mentioned problems and challenges lead us to the following question:
 
 \begin{displayquote}
-\textbf{Can we create a technology stack that would allow to build decentralized alternatives to big tech?}
+\textbf{Can we create a technology stack that would allow building decentralized alternatives to big tech?}
 \end{displayquote}
 
-Our work consists of 2 parts. First, we design a zero-server architecture and develop several networking primitives which remove the need for central control by any trusted third party. No central element exists which can form a performance bottleneck or point-of-failure. These serve as the basic building blocks for creating full fledged Facebook alternative with full interoperability and data portability. We have not created a full alternative to Facebook within the context of a single master thesis. However, we provide the basis for it and claim that our infrastructure will scale to usage by the 2 billion existing Facebook users without fundamental alterations. Our Internet-deployed network primitives are:
+Our work consists of 2 parts. First, we design a zero-server architecture and develop several networking primitives which remove the need for central control by any trusted third party. No central element exists which can form a performance bottleneck or point-of-failure. These serve as the basic building blocks for creating a full fledged Facebook alternative with full interoperability and data portability. We have not created a full alternative to Facebook within the context of a single master thesis. However, we provide the basis for it and claim that our infrastructure will scale to usage by the 2 billion existing Facebook users without fundamental alterations. Our Internet-deployed network primitives are:
 
 \begin{itemize}
     \item Identity layer based on public keys of trusted contacts with secure public key exchange
     \item Authenticated communication bypassing NAT boxes and other imperfect hardware
-    \item Establishing connection with known contacts using a social-based zero-server overlay %with automated Internet address discovery based on a UDP-puncturing capable DHT
+    \item Establishing a connection with known contacts using a social-based zero-server overlay %with automated Internet address discovery based on a UDP-puncturing capable DHT
     \item Secure end-to-end encrypted messaging of any message size
-    \item Distributed bookkeeping with tamper-resilience using TrustChain to synchronize data, prevent spam and abuse
+    \item Distributed bookkeeping with tamper-resilience to facilitate communities with self-governance using TrustChain
 \end{itemize}
 
 \iffalse
 Our zero-server architecture is also meticulously designed to offer another unique property: resilience against legal attacks. Legal action may be expected when a monopoly is attacked. We believe that this thesis proves the first proof-of-principle of a disruptive open innovation ecosystem which is resilient against attacks by disrupted or disintermediated corporate entities. Possible legal attacks includes: legal intimidation, lawyer-based attacks and creation of chilling effects. Our unique approach to governance gives ownership to both nobody and everybody. By creating an academically pure form of self-organisation we create a leaderless infrastructure in which even the original creators have no special powers. It is difficult to block, disrupt or shutdown our zero-server approach with either legal or technological means when used by citizens at scale.
 \fi
 
-We then take advantage of these building blocks to build our own decentralized version of a super app with ability to extend its features using mini-apps. The first version of a distributed social network with private messaging and a public feed has been developed as the proof of principle that service like Facebook could potentially be built using this stack.
+We then take advantage of these building blocks to build our decentralized version of a super app with the ability to extend its features using mini-apps. The first version of a distributed social network with private messaging and a public feed has been developed as the proof of principle that service like Facebook could potentially be built using this stack.
 %On top of our networking primitives we facilitate an open innovation ecosystem.
 %Every user can extend the functionality of the platform freely. No gatekeepers exists to moderate mini-apps, this relies on self-moderation by the community.
 
@@ -321,7 +321,7 @@ UDP hole punching is implemented as a basic NAT traversal technique to allow con
 Discovery protocol based on a \textit{distributed hash table (DHT)} allows to connect to specific peers using their public key, without need for knowing their IP address. While there is a list of trusted bootstrap servers provided, in theory any peer in the network can be used to bootstrap connection, thanks to distributed nature of UDP hole punching protocol which does not rely on STUN servers.
 
 \subsubsection{TrustChain}
-The library also provides TrustChain \cite{trustchain}, a scalable distributed ledger for tamper-proof accounting. It is currently mainly used as a bandwidth accounting mechanism to prevent freeriding in Tribler, but has wide range of other potential use cases, including a decentralized asset exchange \cite{anydex}, or identity attestations and verifiable claims.
+The library also provides the implementation of TrustChain \cite{trustchain}, a scalable distributed ledger for tamper-proof accounting. It is currently mainly used as a bandwidth accounting mechanism to prevent freeriding in Tribler, but has wide range of other potential use cases, including a decentralized asset exchange \cite{anydex}, or identity attestations and verifiable claims.
 
 %\subsubsection{Known Issues}
 %There are several known issues with the current implementation of the library, which we now briefly discuss.
@@ -340,7 +340,7 @@ It is written in Python, as well as the rest of the Tribler stack. While using a
 
 There has been a long track of efforts to explore the usage of mobile devices in peer to peer systems at TU Delft. The \textbf{app-to-app communicator}\footnote{https://github.com/Tribler/app-to-app-communicator} was an early prototype that implemented a basic UDP hole punching method to test the feasibility of a device to device overlay without any server infrastructure. The \textbf{self-compiling Android application}\footnote{https://github.com/Tribler/self-compile-Android} was an experimental project that bundled all tools from the Android SDK required to assemble an APK on Android. This has proven viability of trustworthy code execution without dependency on a centralized app store. The \textbf{trustchain-android}\footnote{https://github.com/Tribler/trustchain-android} project implements a TrustChain-like distributed ledger and a UDP hole punching protocol. It has been written in Java, but the protocol is not compatible with TrustChain which was originally implemented as part of the py-ipv8 library, even though it uses the same principles. %In this thesis, we will build on top of this existing research, but with usage of modern tools available today.
 
-\section{Network Address Translation}
+\section{Background on State of the Art}
 
 \textit{Network Address Translation} (NAT) is a method of mapping addresses from one address space into another by modifying the IP header of a packet on its way from the source to the destination. It has been originally proposed as a temporary solution to slow down IPv4 address space exhaustion, until a better solution is implemented. \cite{nat} Yet, it has become so ubiquitous in the Internet infrastructure that almost all end users are located behind a NAT nowadays.
 
@@ -449,13 +449,11 @@ The protocol allows a host behind a NAT \textit{(TURN client)} to request anothe
 
 While this approach allows to establish connection in almost all screnarios, it comes with a high cost on the TURN server operator, so it is meant to be used only as a last resort when no other type can be established. There is also no incentive for TURN server operators to provide this service.
 
-\subsection{Interactive Connectivity Establishment (ICE)}
+%\subsection{Interactive Connectivity Establishment (ICE)}
 
-The \textit{Interactive Connectivity Establishment (ICE)} \cite{ice} provides the complete solution for NAT traversal which is built on top of STUN and TURN protocols. TODO
+%The \textit{Interactive Connectivity Establishment (ICE)} \cite{ice} provides the complete solution for NAT traversal which is built on top of STUN and TURN protocols. TODO
 
-% \subsection{ICMP Hole Punching}
-
-\subsection{Symmetric NAT Traversal}
+%\subsection{Symmetric NAT Traversal}
 
 
 \section{Nearby Communication}
@@ -608,18 +606,25 @@ The transport layer is responsible for transferring data between peers. There ar
 
 TCP provides \textit{connection-oriented}, \textit{reliable} streams. That means that the connection needs to be established before any communication happens. This is done by means of a two-way handshake. Once the connection is established, messages can be exchanged. The messages until they are acknowledged, so the communication is reliable. The sliding window is used for congestion control, so multiple messages can be on the fly at the same time, ensuring efficient usage of the available bandwidth.
 
-On the other hand, UDP is a simple \textit{connectionless} protocol without any delivery guarantees. UDP packets called \textit{datagrams} and its behavior can be described as \textit{fire-and-forget}, as the sender generally does not have any information about packet delivery. It is primarly intended for use in real-time applications where packet loss is acceptable. UDP can also be used for building higher-level transport protocols such as \textit{uTP} or \textit{QUIC}.
+On the other hand, UDP is a simple \textit{connectionless} protocol without any delivery guarantees. UDP packets called \textit{datagrams} and its behavior can be described as \textit{fire-and-forget}, as the sender generally does not have any information about packet delivery. It is primarly intended for use in real-time applications where packet loss is acceptable. %UDP can also be used for building higher-level transport protocols such as \textit{uTP} or \textit{QUIC}.
 
 Many commonly used protocols such as HTTP take advantage of the reliable transport provided by TCP. However, in P2P setting, UDP is usually favored thanks to its simplicity and absence of a handshake, which makes NAT traveral easier. ICE has been originally defined only for UDP. Though extensions for TCP have been proposed, they rely on a specific NAT behavior to work and have significantly lower success rate than over UDP. For these reasons, we will also choose to use UDP.
 
 \subsection{UDP Socket Multiplexing}
 
+Multiplexing is a method of combining multiple communication channels to share a single communication medium. In P2P communication, every peer commonly communicates with many peers simultaneously and thus needs to keep multiple open connections. The TCP/IP stack implements multiplexing by using different ports for different sockets. However, we implement our own multiplexing mechanism that allows us to use a single UDP socket for all communication. Not only it removes the overhead of keeping multiple open sockets at the same time, but more importantly, we have to deal with the NAT traversal only once, and our publicly facing address stays constant for all peers.
 
+\subsection{Secure Communication}
 
-\subsection{Authentication and Encryption}
+We consider the communication between two parties to be secure when both parties can be sure no one is altering or intercepting the communication. This can be ensured by the means of cryptographic techniques authentication and encryption. By default, all packets are signed to provide authentication. However, as every application has different needs, this behavior can be easily overriden by the application developer to use encryption or authenticated encryption when desired.
 
 \subsection{Binary File Transfer over UDP}
 
+The size of a UDP packet is theoretically limited to 65,535 bytes. However, the size is in practise limited by the \textit{Maximum Transmission Unit (MTU)} of Ethernet, which is 1500 bytes, minus 60 bytes taken by the IP header. With 8 more bytes taken by the UDP header, this leaves only 1432 bytes available for the UDP packet payload. When the user tries to send a larger packet, it is fragmented and delivered in parts without any ordering or delivery guarantees. Therefore, when working with UDP, the application developer needs to make sure to stay within this limit.
+
+This is not practical, and a general-purpose networking library should abstract developers away from the underlying communication protocol. Ideally, we should be able to send messages of unbounded size. There are many binary transfer protocols that can be implemented on top of UDP, including \textit{TCP over UDP}, \textit{uTP}, or \textit{QUIC}.
+
+There is no binary transfer protocol implemented in \texttt{py-ipv8}. In our implementation, we decided to use the \textit{Trivial File Transfer Protocol (TFTP)}, due to its simplicity and ease of implementation. It is a simple protocol that splits the payload into the chunks of 512 bytes and then keeps sending them one by one. It awaits for an acknowledgement of each packet before sending the next one. This makes it very inefficient with high bandwidth and considerable network delays, as can be seen in the later evaluation chapter. While it was suitable for a prototype and improving the reliability of the transport layer, in the future, a more efficient protocol with a sliding window should be implemented instead.
 
 %\subsection{NAT Traversal}
 
@@ -704,12 +709,11 @@ We would like to have a fully automated NAT traversal. For that, we need a mecha
 
 %\section{Relay Protocol with Bandwidth Accounting}
 
-\section{Security Considerations}
-
-\subsection{Sybil Attack}
-\subsection{Eclipse Attack}
-\subsection{Distributed Denial of Service}
-\subsection{WAN Address Forgery}
+%\section{Security Considerations}
+%\subsection{Sybil Attack}
+%\subsection{Eclipse Attack}
+%\subsection{Distributed Denial of Service}
+%\subsection{WAN Address Forgery}
 
 \clearpage
 
@@ -772,7 +776,7 @@ As mentioned earlier, the primary purpose of BLE was to enable exchange of infor
 
 \begin{figure}
     \includegraphics[width=\textwidth]{diagrams/ipv8-ble-architecture}
-    \caption{Bluetooth Low Energy Communication Architecture}
+    \caption{Our Bluetooth Low Energy Communication Architecture}
     \label{ble_architecture}
 \end{figure}
 
@@ -817,6 +821,21 @@ The connection manager contains all GATT-related communication logic. Each devic
 % https://blog.classycode.com/a-short-story-about-android-ble-connection-timeouts-and-gatt-internal-errors-fa89e3f6a456
 % https://punchthrough.com/android-ble-development-tips
 
+
+\section{Distributed Data Store}
+
+Any system that allows user interaction needs a way to record and exchange data. In traditional services, this is done using a client-server model where a server is the source of truth. In a distributed system where data need to be synchronized across many independent nodes, a lot of problems arise, such as data availability, consistency, and network partition tolerance.
+
+\subsection{TrustChain: Scalable Distributed Ledger}
+
+In our stack, we use TrustChain \cite{trustchain}, a graph-based append-only datastructure. It was designed to record any type of transactions between strangers without central control. Compared to traditional blockchains such as Bitcoin or Ethereum, it does not require global consensus and thus can work in partitioned networks and is linearly scalable.
+
+In TrustChain, every user has its own chain with its own \textit{genesis} block. Every block contains exactly one transaction. Whenever a transaction is created between two parties, a block is added to the chains of both participants, which causes entanglement.
+
+A block is usually composed of two half-blocks, where a half-block is added to the chain of each transaction participant. For this reason, transaction creation needs to be interactive. Let's assume A wants to perform a transaction with B. First, A creates a \textit{proposal block} containing its public key, the sequence number of the previous block, the hash of the previous block, and the public key of the conterparty (a \textit{link public key}). Finally, A signs the \textit{proposal block} with its own private key and sends it to B. Upon receiving the proposal block, B validates its integrity. If the block is valid and B agrees with the proposed transaction, it creates an \textit{agreement block}. The agreement block should contain the public key of B, the sequence number of its previous block, a public key of A, and the sequence number of the other half-block in the chain of A. Finaly, B signs the agreement block with its private key and sends it back to A. After this, the transaction is considered completed.
+
+%Each participant in the network maintains its personal chain which starts with a genesis block. Each transaction consists of two half-blocks. A half-block contains a pointer to the previous block in the respective chain, and a signature of the chain owner. Whenever two participants perform a transaction, we say their chains become \textit{entangled}, as each half-block of the final block resides in a different chain.
+
 \chapter{Protocol Implementation}
 
 In this section, we describe the system architecture and implementation of the P2P communication library. One of our main goals is to create an implementation that would be compatible with the majority of mobile devices. The most commonly used operating systems are Android and iOS, where Android uses the Android Runtime, with primary programming language being Java or Kotlin. iOS runs ARM native code compiled from Objective-C or Swift. Both platforms support running native code and allow the use of bridges to access system APIs. We are primarily interested in supporting Android, but extension for iOS support should be possible in the future.
@@ -842,7 +861,10 @@ A \textit{community} is a service implemented by the developer, or provided by t
 
 Every community can have assigned one or more \textit{dicovery strategies}. A discovery strategy is primarily responsible for actively discovering and connecting to new peers in the network who are present in the same community. The discovery strategy should implement a method \texttt{takeStep} that is called reguarly in a preconfigured step interval and performs the required task.
 
-Finally, an \textit{endpoint} is used to perform the communication. The library supports multiple transports implemented by separate endpoints. To abstract this away from the application developer, the community only communicates with the \textit{endpoint aggregator}. It groups all endpoints and decides to which endpoint the message should be sent. The messages received by the endpoint are then forwarded to the correct community based on the message header.
+%Finally, an \textit{endpoint} is used to perform the communication. The library supports multiple transports implemented by separate endpoints. To abstract this away from the application developer, the community only communicates with the \textit{endpoint aggregator}. It groups all endpoints and decides to which endpoint the message should be sent. The messages received by the endpoint are then forwarded to the correct community based on the message header.
+
+Finally, an \textit{endpoint} is an service facilitating communication with the outside world. It is responsible for opening a communication socket, and sending and receiving serialized packets from other peers over the opened socket. %It is defined in form of an interface that can be implemented for different transport layers.
+The library supports multiple transports implemented by separate endpoints. To abstract this away from the application developer, the community only communicates with the \textit{endpoint aggregator}. It groups all endpoints and decides to which endpoint the message should be sent. The messages received by the endpoint are then forwarded to the correct community based on the message header.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{diagrams/ipv8-architecture}
@@ -852,9 +874,7 @@ Finally, an \textit{endpoint} is used to perform the communication. The library 
 
 \section{Communities}
 
-\subsection{Community}
-
-Each community has to extend the abstract \texttt{Community} class which implements the \texttt{Overlay} interface. The only field left for the developer to define is \texttt{serviceId}. This can be an arbitrary 20-byte array represented as a hexadecimal string that uniquely identifies the community. The Community class defines several methods that can be used by its subclasses:
+Each service has to extend the abstract \texttt{Community} class which implements the \texttt{Overlay} interface. The only field left for the developer to define is \texttt{serviceId}. This can be an arbitrary 20-byte array represented as a hexadecimal string that uniquely identifies the community. The Community class defines several methods that can be used by its subclasses:
 
 \begin{itemize}
     \item \texttt{getPeers(): List<Peer>} – Returns the list of connected peers that are present in this community.
@@ -867,6 +887,17 @@ Each community has to extend the abstract \texttt{Community} class which impleme
 
 \texttt{DiscoveryCommunity} is one of the core communities implemented by the IPv8 core. It tries to keep an active connection with a specified number of peers and keeps track of communities they participate in by sending \textit{similarity requests}. A similarity requests contains a list of communities the sender supports, and expects to receive a \textit{similarity response} back, which will include the list of communities supported by the other side. Furthermore, it implements \textit{ping} and \textit{pong} messages that allow to perform keep-alive checks, measure latency between peers, and handle peer churn by removing churned peers from the peer store. While it is possible to run IPv8 without using this community, it is not recommended. The discovery community is expected to be used with \texttt{PeriodicSimilarity} and \texttt{RandomChurn} strategies.
 
+\subsection{TrustChain Community}
+
+\texttt{TrustChainCommunity} implements TrustChain, a scalable distributed ledger previously described in Section 4.7. The community implements 3 use basic cases: interactive block signing, broadcasting, and crawling.
+
+Whenever a new proposal block is created, it is sent using a \textit{half block} message to the counterparty stated in the link public key field. The counterparty should create and sign an agreement block and send it back in another half block message. The proposer should wait for the response and re-send the half block to the counterparty if they do not respond within a timeout interval.
+
+Whenever a peer signs a proposal or an agreement block, they should broadcast it using a \textit{half block broadcast} or \textit{half block pair broadcast} message respectively. Any peer who receives the broadcast message should decrement TTL and re-broadcast it.
+
+The \textit{crawl request} is used to retrieve a chain of blocks with a specific public key. The start and end sequence numbers should be specified to request only the part of the chain we don't have yet. A unique crawl ID should be included in each crawl request. After initiating a crawl, the initiator should wait until they receive all blocks from the requested range. If all blocks are not received within a timeout interval, a new crawl request should be sent with the start sequence number updated. Whenever a peer receives the crawl request, it should send all blocks within the specified range in separate \textit{crawl response} messages, or send an \textit{empty crawl response} if there is no block in the specified range.
+
+% TODO
 
 % \subsubsection{Ping}
 
@@ -882,7 +913,7 @@ Each community has to extend the abstract \texttt{Community} class which impleme
 
 \subsection{Periodic Similarity}
 
-The \texttt{PeriodicSimilarity} strategy simply sends a similarity request on every step to a random peer in the peer store, and thus ensures the list of communities for every peer is kept up to date. It is only intended to be used for \texttt{DiscoveryCommunity}.
+The \texttt{PeriodicSimilarity} strategy simply sends a similarity request on every step to a random peer in the peer store, and thus ensures the list of communities for every peer is kept up to date. It is only intended to be used with \texttt{DiscoveryCommunity}.
 
 \subsection{Random Churn}
 
@@ -890,15 +921,21 @@ The \texttt{RandomChurn} strategy starts by selecting a list of random peers on 
 
 \subsection{Bluetooth Discovery Strategy}
 
-\section{Endpoints}
+\texttt{BluetoothLeStrategy} is a default strategy for initiating connections with nearby peers. In each step, it queries all discovered but unconnected peers, and sends a connection request to the peer with the highest RSSI value. It limits the maximum number of peers to 7, as it is known to be the the highest amount of peers Android Bluetooth implementation is able to handle reliably. For more dense nearby communication, a mesh network should be built on top of the existing protocol.
 
-\subsection{Endpoint Aggregator}
+%\section{Endpoints}
 
-\subsection{UDP Endpoint}
 
-\subsection{TFTP Endpoint}
 
-\subsection{Bluetooth Endpoint}
+%\subsection{UDP Endpoint}
+
+%The most straightforward and the only endpoint supported by the \texttt{py-ipv8} implementation is the UDP endpoint. It implements communication over a UDP socket.
+
+%\subsection{TFTP Endpoint}
+
+%\subsection{Bluetooth Endpoint}
+
+%\subsection{Endpoint Aggregator}
 
 \section{Bootstrap Server}
 
@@ -1067,30 +1104,34 @@ private fun onMessage(packet: Packet) {
 
 \chapter{Decentralized Super App}
 
-The application follows the concept of a super app, and bundles many mini-applications in a single APK. It is implemented in a separate repository \textit{trustchain-superapp}\footnote{https://github.com/Tribler/trustchain-superapp} and includes kotlin-ipv8 as a Git submodule.
+Inspired by the emerging concept of super apps, we propose our own variant of a super app which builds on top of our decentralized stack, and is not dependent on any centralized infrastructure. The screenshot of the launcher screen with the list of available mini-apps is shown in Figure \ref{dashboard}.
+
+All mini-apps are currently implemented in a separate repository \textit{trustchain-superapp}\footnote{https://github.com/Tribler/trustchain-superapp} and include kotlin-ipv8 as a Git submodule. In the future, we envision a decentralized app store, where users would be able to publish, download, and update mini-apps created by the community, without relying on centralized app stores. This idea is highly related to the previous research on FBase. However, its implementation would need to further research in dynamic code execution in the context of Android Runtime, and is out of scope of this thesis.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.32\textwidth]{screens/superapp/superapp}
     \caption{The dashboard of the super app composed of several decentralized mini-apps implemented on top of the kotlin-ipv8 library and TrustChain.}
-    \label{manyverse}
+    \label{dashboard}
 \end{figure}
-
-\section{TrustChain: Scalable Distributed Ledger}
-
-\subsection{TrustChain Explorer}
 
 \section{PeerSocial: Decentralized Social Network}
 
+In our initial implementation, we focus on providing basic building blocks for a decentralized social network that should in principle be able to replace services provided by Facebook and WeChat. There are three basic funcionalities we want our social network to provide:
+
+\begin{itemize}
+    \item A friend list with secure key exchange mechanism that prevents impersonation and man-in-the-middle attack
+    \item End-to-end encrypted private messaging
+    \item Public post feed with likes and replies
+\end{itemize}
+
 \subsection{Trustworthy Friendship Establishment}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.32\textwidth]{screens/superapp/contacts}
-    \includegraphics[width=0.32\textwidth]{screens/superapp/contacts_menu}
-    \caption{The list of contacts with online indicators, their latest messages with timestamps, and the connectivity status of the local UDP and Bluetooth endpoints.}
-    \label{manyverse}
-\end{figure}
+Before any communication starts, it is important to know who we are communicating with. In traditional social networks, users are simply identified by their name, e-mail, or a phone number. However, relying on these attributes makes it relatively easy to perform an impersonation attack, a form of attack in which an adversary acts as a trusted person with the aim of financial or intellectual loss.
+
+There are several ways of establishing trust in cryptography systems, with different compromises between security and convenience. Many commonly used protocols have adopted \textit protocol to secure all communication between clients and servers. The trust in TSL is enforced by using \textit{public key infrastructure (PKI)} with trusted certificate authorities. As no central authority is desired in peer-to-peer systems, there is a decentralized alternative called a \textit{web of trust}, which is characteristic for systems based on \textit{Pretty Good Privacy (PGP)}. In the web of trust, identity certificates (certificate connecting public keys to owner identity) are signed by its users. This is usually done in person at key signing parties. A weaker form of security is provided by \textit{trust on first use (TOFU) authentication} scheme, where the link between the identity and the public key is established during the first communication touchpoint. After that, the public key is stored in the local trust store, so any man-in-the-middle attack trying to change the public key is detected.
+
+In our system, we require users to exchange public keys before they start communicating. The key exchange can happen either in person, or over a secure channel. The implemented user interface for secure key exchange mechanism is shown in Figure \ref{screen_keyexchange}. When both contacts are in proximity, they can simply scan each other's QR code which encodes the public keys. This is the most secure way of exchanging keys, as users can be sure the key has not been tampered with. When the users want to establish communication remotely, they can exchange the public keys in hexadecimal encoding over a secure channel. In this way, the security of the key exchange relies on the security of the communication channel. Finally, the user are prompted to assign a human-readable name to the public key of the other party.
 
 
 \begin{figure}
@@ -1099,27 +1140,57 @@ The application follows the concept of a super app, and bundles many mini-applic
     \includegraphics[width=0.32\textwidth]{screens/superapp/add_remote_contact}
     \includegraphics[width=0.32\textwidth]{screens/superapp/add_contact}
     \caption{The UI for adding a public key of a new nearby or remote contact to the trusted public key store, and associating the public key with a human-readable contact name.}
-    \label{manyverse}
+    \label{screen_keyexchange}
 \end{figure}
 
+After saving the contact, it is shown in the contact list with its name, public key, and the text and timestamp of the last exchanged message. The contact list UI is shown in Figure \ref{peerchat_contacts}.
 
-\subsection{PeerChat: Private Messaging Protocol}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/contacts}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/contacts_menu}
+    \caption{The list of contacts with online indicators, their latest messages with timestamps, and the connectivity status of the local UDP and Bluetooth endpoints.}
+    \label{peerchat_contacts}
+\end{figure}
+
+\subsection{Private Messaging Protocol}
+
+We build on top of our identity and networking layer to provide a decentralized alternative of a messaging application. It should allow users to send end-to-end encrpted private messages. In addition to text messages, it should also allow to transfer images and other binary files.
+
+We design a simple messaging protocol consisting of two payload types: a \textit{message}, and an \textit{acknowledgement}. The message payload contains a unique id, a text message, and an optional attachment metadata consisting of the attachment type, size, and id. The acknowledgement payload contains simply the id of the message whose delivery should be acknowledged.
+
+The protocol works as follows. The user A sends a message payload and awaits to receive an acknowledgement from the recipient. If the acknowledgement is not received within a timeout, the message is being periodically resent. This guarantees at-least-once delivery and ensures all messages are eventually delivered when both peers are online.
+
+As attachments can be arbitrary large, we want to leave it up to the application to decide when they should be fetched. For example, the user might not want to automatically fetch large attachments over a metered LTE connection which has an associated data limit. For this reason, the message payload includes only the attachment ID which can be used to request the content of the attachment. The attachment ID is the hash of the content, which effectively prevents file duplication when a single file is shared by multiple people. We define two more payloads to support attachments: \textit{attachment request}, and \textit{attachment response}. The attachment request contains only the attachment ID and used to request the content of the attachment. When a peer receives an attachment request, they should check if the requested attachment is stored in their storage and respond with the corresponding attachment response containing the binary attachment data.
+
+The screenshots of the conversation UI showing text messages, attachments, and delivery indicators, are shown in Figure \ref{peerchat_conversation}.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.32\textwidth]{screens/superapp/conversation_text}
     \includegraphics[width=0.32\textwidth]{screens/superapp/conversation}
     \caption{The conversation UI containing incoming and outgoing text messages, image attachments, and delivery indications for outgoing messages.}
-    \label{manyverse}
+    \label{peerchat_conversation}
 \end{figure}
 
 \subsection{Public Post Feed}
 
+To complete our idea of a social network, we need add a way for users to share information publicly. Each user should have their own feed in which they publish posts. Other users should then be able interact with those posts by publishing replies or likes.
+
+We take advantage of the TrustChain ledger as a data storage and synchronization mechanism. Its acyclic graph data structure is perfectly suited for our use case of modelling a social network. The feed is represented by blocks in the user's chain. There are two types of blocks representing posts and likes. A post is created as a proposal block with ANY\_COUNTERPARTY constant used for the linked public key, meaning anyone can create the agreement block. The agreement blocks represent replies to the linked post. The agreement block can be linked to a post or another reply. This will ultimately result in multiple agreement blocks linked to a single proposal blocks if there are more than a single reply or like for a given post.
+
+In our prototype, posts can only contain text messages, but the functionality could be easily extended to also support binary attachments, using the same content-addressable mechanism as previously described in the messaging protocol.
+
+Our data storage acts as an append-only ledger, which has an interesting consequence that something that was once published cannot be changed or removed, as the history is immutable. If edit or remove functionality was desired in the UI, it could be implemented as another type of block changing the state of the original block. The application would then need to replay all blocks in the chain to determine the final state of the feed and find out about possible post updates or removals.
+
+The UI of our initial social network implementation is shown in Figure \ref{peersocial_feed}, displaying the social feed of friends with like and reply count.
+
 \begin{figure}
     \centering
     \includegraphics[width=0.32\textwidth]{screens/superapp/feed}
-    \caption{The social feed with likes and replies.}
-    \label{manyverse}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/new_post}
+    \caption{The social feed with likes and replies and the screen for composing a new post.}
+    \label{peersocial_feed}
 \end{figure}
 
 
@@ -1137,11 +1208,26 @@ The application follows the concept of a super app, and bundles many mini-applic
 
 %\section{Testbed for Distributed Android Applications}
 
-\section{DelftDAO: Framework for Permissionless Economic Activity}
+\section{TrustChain Explorer}
+
+TrustChain Explorer is a tool that allows to browse the blocks received from the network and stored in the local store. Its main purposes are to simplify application development and debugging, and to familiarize new developers with the main concepts used in TrustChain. The main parts of the UI can be seen in Figure \ref{trustchainexplorer}. The first tab shows the list of chains ordered by the number of discovered blocks. After clicking on the chain, all blocks stored for the given chain are shown. Each block can then be expanded to show all information stored in the block, including public keys and decoded transaction. In the second tab, all recent blocks are shown, sorted by the insert time. The list is refreshed automatically, so it looks as a live stream of incoming blocks. In the last tab, blocks in the chain of the sign in user are shown. The user can create a new proposal block with an arbitrary transaction content by clicking on the plus button. Finally, they can counter-sign incoming blocks that are awaiting their signature. The TrustChain Explorer application is not very useful on its own, but it has proved to be valuable during development of applications using the TrustChain ledger.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.32\textwidth]{screens/superapp/explorer_chains}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/explorer_blocks}
+    \includegraphics[width=0.32\textwidth]{screens/superapp/explorer_mychain}
+    \caption{The list of all chains, blocks, and a block detail in the TrustChain Explorer app.}
+    \label{trustchainexplorer}
+\end{figure}
+
+
+
+%\section{DelftDAO: Framework for Permissionless Economic Activity}
 
 \chapter{Evaluation}
 
-In this chapter, we perform an experimental evaluation of various components of the developed networking library, to show its scalability and fasability of being used in production. First, we analyze the success rate of the NAT traversal mechanism on carrier networks of all major internet service providers (ISPs). Then, we analyze the bootstrap performance to evaluate how long does it take to become fully connected to the network from the initial bootstrap server contact. Subsequently, we perform a stress test by connecting to up to 500 peers in the live network. During the experiment, we observe the message complexity and the ping latency of a given peer while the number of connected peers is increasing. We measure and evaluate the transfer rate of the binary transfer protocol. We analyze the power efficiency by measuring the battery consumption for different connection methods to show how much the application affects the battery life of the device. Finally, we evaluate the code quality of the project from the test coverage perspective.
+In this chapter, we perform an experimental evaluation of various components of the developed networking library, to assess its scalability and production-readiness. The lack of end to end connectivity is a big problem in P2P, so we focus on that first in our evaluation. We analyze the success rate of the NAT traversal mechanism on carrier networks of all major internet service providers (ISPs). Then, we perform a stress test by connecting to up to 500 peers in the live network. During the experiment, we observe the message complexity and the ping latency of a given peer while the number of connected peers is increasing. We measure and evaluate the transfer rate of the binary transfer protocol. Subsequently, we analyze the bootstrap performance to find out how long does it take to become fully connected to the network from the initial bootstrap server contact. We analyze the power efficiency by measuring how much the application affects the battery life of the device. Finally, we evaluate the code quality of the project from the test coverage perspective.
 
 \section{Analysis and Puncturing of Carrier Grade NAT}
 
@@ -1232,22 +1318,9 @@ The results of the connectivity test are presented in Table \ref{table_cgnat_ana
     \label{table_cgnat_analysis}
 \end{table}
 
-\section{Bootstrap Performance}
+\section{Social Graph Scalability Experiment}
 
-For the next two experiments, we take advantage of the existing IPv8 network. We run our novel Kotlin implementation of IPv8 on Android and connect to rest of the existing network to evaluate various metrics in scale.
-
-First, we evaluate the bootstrap performance by measuring how long does it take to discover and connect to 30 random peers in the network. We use a random walk discovery strategy which is set to discover 30 peers, and a step interval of 0.5 s, which means new peer introductions are requested at this interval. We run the bootstrap mechanism three times, and reset the IP address before each run to drop any existing connections. The results of all runs are averaged out and visualized in Figure \ref{bootstrap_performance}. It can be seen that the target of 30 peers is on average reached in 35 seconds.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{plots/bootstrap}
-    \caption{The bootstrap performance when using a random walk discovery strategy with a step of 0.5 s. Data averaged out over 3 independent runs.}
-    \label{bootstrap_performance}
-\end{figure}
-
-\section{Message Complexity and Latency}
-
-The average Facebook user has 155 friends \cite{facebookfriends}. To show that our solution scales well beyond the average use, we perform a stress test by connecting to up to 500 peers and measure how our system handles the increased communication load.
+The average Facebook user has 155 friends \cite{facebookfriends}. We perform a stress test by connecting to up to 500 peers and measure how our system handles the increased communication load, to show that our solution scales well beyond the average use.
 
 First, we measure the message complexity as the number of messages received from other peers per minute. The messages mostly consist of introduction and similarity requests and responses sent by TrustChain and discovery community, but they also also include blocks broadcasted by connected peers. In Figure \ref{message_complexity} we can see that the number of messages scales linearly with the number of connected peers.
 
@@ -1262,9 +1335,22 @@ During the whole test, we have also measured the latency by sending pings from a
 
 % TODO: breakdown by message type?
 
+\section{Bootstrap Performance}
+
+For the next two experiments, we take advantage of the existing IPv8 network. We run our novel Kotlin implementation of IPv8 on Android and connect to rest of the existing network to evaluate various metrics in scale.
+
+First, we evaluate the bootstrap performance by measuring how long does it take to discover and connect to 30 random peers in the network. We use a random walk discovery strategy which is set to discover 30 peers, and a step interval of 0.5 s, which means new peer introductions are requested at this interval. We run the bootstrap mechanism three times, and reset the IP address before each run to drop any existing connections. The results of all runs are averaged out and visualized in Figure \ref{bootstrap_performance}. It can be seen that the target of 30 peers is on average reached in 35 seconds.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/bootstrap}
+    \caption{The bootstrap performance when using a random walk discovery strategy with a step of 0.5 s. Data averaged out over 3 independent runs.}
+    \label{bootstrap_performance}
+\end{figure}
+
 \section{Binary Transfer Rate}
 
-We measured the transfer rate of the implemented binary transfer protocol, TFTP. The test was performed by sending JPEG images varying in sizes in steps of 50 kB between two Android devices. The resulting transfer duration and average transfer rate is shown in Figure \ref{tftp_plot}. Even though the test was performed over LAN on Wi-Fi with 65 Mbps transfer rate capability, the achieved transfer rate is only around 7.5 kB/s. We expected the transfer rate to be much lower that the theoretical upper bound due to the triviality of the protocol. Much higher speeds could be achieved by implementing a more advanced binary transfer protocol based on a sliding window such as uTP or QUIC. However, the transfer rate is stable with increasing image size, validating the correctness of the implementation.
+We measured the transfer rate of the implemented binary transfer protocol, TFTP. The test was performed by sending JPEG images varying in sizes in steps of 50 kB between two Android devices. The resulting transfer duration and average transfer rate is shown in Figure \ref{tftp_plot}. Even though the test was performed over LAN on Wi-Fi with 65 Mbps transfer rate capability, the achieved transfer rate is only around 60 kb/s. We expected the transfer rate to be much lower that the theoretical upper bound due to the triviality of the protocol. Much higher speeds could be achieved by implementing a more advanced binary transfer protocol based on a sliding window such as uTP or QUIC. However, the transfer rate is stable with increasing image size, validating the correctness of the implementation.
 
 \begin{figure}[h!]
     \centering
@@ -1276,9 +1362,18 @@ We measured the transfer rate of the implemented binary transfer protocol, TFTP.
 
 \section{Power Efficiency}
 
-One of the biggest threats for P2P communication on mobile devices is the battery consumption. To ensure the correct behavior of the application, it is necessary to keep long-live sockets open with regular keep-alive checks. This has negative effect on the battery life. We performed a long-running experiment to measure this effect in practice.
+One of the biggest threats for P2P communication on mobile devices is the battery consumption. To ensure the correct behavior of the application, it is necessary to keep long-lived connection open with regular keep-alive checks. This has a significant negative effect on the battery life, as it prevents the device from using its power-saving features. We performed a long-running experiment to measure this effect in practice. The results are shown in Figure \ref{battery}.
 
-TODO
+We used Pixel with Android 9 to capture the battery life behavior in three different scenarios. First, we started our application and let it connect to 200 peers. Then we turned off the screen, but kept the application running in the foreground service, allowing it to do its work. In this case, the battery drained quickly in 6 hours. After that, we limited connections to 20 peers. In that case, the battery life was slightly better and lasted for 10 hours. Finally, we left the application turned off. This allowed the device to take advantage of power-saving features and only schedule network requests for background applications in batches. In that case, the battery level was still on 90\% after 10 hours.
+
+The experiment shows that it might not be practical to establish long-lived connections and keep the application running in the foreground for longer periods of time. Instead, it might be necessary to only connect to the network when the user interacts with the app, or to occasionally fetch the current state from the network in the background.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/battery}
+    \caption{The relation between the number of connected peers on the battery usage.}
+    \label{battery}
+\end{figure}
 
 \section{Code Quality}
 
@@ -1311,7 +1406,22 @@ Finally, we analyze the code quality of the resulting codebase. For a maintainab
 
 \chapter{Conclusion}
 
+In this thesis, we have designed and implemented a peer to peer communication library for Android allowing to establish pure smartphone-based overlay network without any infrastructure. The networking library can establish communication with other peers either over Wi-Fi, LTE, or Bluetooth Low Energy. It builds on top of ongoing research at TU Delft, and presents the first feature-complete TrustChain implementation running natively on Android smartphones. However, both the networking library and the TrustChain implementation is also fully compatible with the existing deployed network, which has been tested by running several experiments in the existing live network operated by real users. We have conducted various experiments evaluating the success rate of implemented NAT traversal, social graph scalability, bootstrap performance, and binary transfer functionality.
+
+Furthermore, we have designed and implemented the first prototype of a distributed messaging and social networking app which demonstrates feasibility of using the library to build full-fledged alternatives to some of the most widely used services today. The app is built in the novel super app paradigm, which makes it easy to extend its functionality with mini-apps taking advantage of the existing social graph.
+
+The project has been published as an open source with extensive code coverage and CI pipeline, allowing future contributions from the community. In the final phase of the development, we conducted an experiment by letting 4 groups of MSc students develop new mini-apps taking advantage of blockchain functionality. All teams managed to develop and test functional non-trivial apps within 10 weeks, proving the ease of library usage.
+
 \section{Future Work}
+
+This early work enables a new field of research related to P2P communication on mobile devices. There is possible future work both in the context of the networking library and decentralized application development. For the networking library to be future proof, it will need to add IPv6 support, which is finally being slowly rolled out by ISPs. The networking library should also have a \textit{Distributed Hash Table (DHT)} integrated to allow building more complex and scalable services. DHT should be in the first place used for resolving peer public keys to their IP addresses, which is needed especially in the context of mobile clients where IP addresses can change frequently. There already is a deployed implementation of a NAT-traversal-capable DHT present in py-ipv8, so porting it to Kotlin should be straightforward.
+
+Another existing field of research is related to mesh networks. As Bluetooth only allows up to 7 connected devices, for higher number of devices, a mesh network with some form of routing is required. Taking a step ahead, there could be even a protocol which would allow routing traffic between the mesh network and the Internet, allowing offline users to connect to peers connected over the Internet. This brings a lot of issues and would probably need to take advantage of bandwidth accounting to prevent freeriding and abuse of the protocol.
+
+On the application level, our early versions of developed applications can be extended with more social features, allowing users to build encrypted group chats, establish friendships and share posts that would only be readable by trusted friends.
+
+Finally, there are other types of services that could be implemented as mini-apps in the super app, or as standalone distributed apps. One of the ideas that has already grown into a separate ongoing thesis work includes a music streaming service which cuts the middlemen out of the  artist revenue distribution. One of the grand ideas is creating a universal distributed market which would allow to trade any real-world currency for any cryptocurrency. Such an exchange should build on top of the existing trust graph to favor trades with people who have proven to trust-worthy. Equipped with the universal trust graph, we could deploy alternatives to any services interacting with real-world such as ride-sharing, or marketplaces.
+
 % IPv6 support, multiple network interfaces
 % BLE mesh network
 % Wi-Fi Aware for higher bandwidth Nearby transfer

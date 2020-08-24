@@ -438,12 +438,14 @@
           \node at (front top left)[anchor=north west,inner sep=\@cover@margin]{
              \begin{minipage}[t][\@cover@fronttextheight]{\@cover@fronttextwidth}
                  %% Print the title and optional subtitle at the top in white.
-                   {\titlefont\color{\@titlecolor}\fontsize{45}{55}\selectfont\@title\par}
+                 \begin{flushleft}
+                   {\titlefont\color{\@titlecolor}\fontsize{52}{52}\selectfont\@title\par}
+                \end{flushleft}
                     \ifx\@subtitle\undefined\else
 %                     \\[3mm]
                      \vfill
                      \begin{flushleft}
-                       {\titlefont\color{\@subtitlecolor}\fontsize{40}{45}\selectfont\@subtitle\par}
+                       {\titlefont\color{\@subtitlecolor}\fontsize{38}{38}\selectfont\@subtitle\par}
                      \end{flushleft}
                    \fi
 
